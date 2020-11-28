@@ -1,0 +1,26 @@
+<America>1llllll[LLffffffffRRRRRffff4Pf7Pf1P]               
+<Brain>llllll(7RRRmmmmmmRRRR3mmmPbbbLLLL7mmmmmmmmm([LLLLPm]LLLLLLLLm3P)RRRRRRRR)(bbbbbbbbbbb5PbbbbLLL4RRmmmmmmmmmmmmP)(bbbbbbbbbbbbLL)(2RmPmPmPmPmPmPmPmP)
+<Clock>llllll[4RRRRRRRRRRRRffff]Rffffff3ffffffffLLLLLLLLLLLLPfP
+<Clocks>[RRRffff2P][bbbbbbbbRRffff3P]uffffffff[ffffffffRRRRRRRdffff4P]RRRRRdffff5P
+<David>LL([mmmmmmmmllllllllllffffffffffffffllllllllffffffffffffffllllllllffffffffffffff])RRRR7c
+<Ellipse>LLffffPRRRR[bPbPbPbPbPbPbPbPbP]fPfPfPfPfPfPfPfPfPfPfPfPfP
+<Lazy>L[5LffffRRffffLLffffP][4RffffLLffffRRffffP][3LLffRRRRffLLLLffPRRRRff7P][2RRffLLLLffRRRRffPLLLLff]
+<Legs>LLLLLL1([ffffRRRRRRRRRRRRffff]llllllllll)2c3c4c5c6c1c2c3c4c5c6c
+<Orbits>LLL1([mmmmlllllllf[rrrrrrmmmmmRRRRRRRRRmmP]f]ll)2c3c4c5c6c7c1c2c3c4c5c
+<Primes>rrrrrrbbbu1LLfffRRR3fffLLLLL4fffRRRRRRR5fffPLLLLLLLLLLL6fffRRRRRRRRRRRRR7fffP
+<SDI>LLL4fffff(R)[llllllbbb3PffffffP]cllllllllllllfffffffffffff
+<Seven>[1LffffP][2LLfffffP][3LLLffffffP][4LLLLfffffffP][5LLLLLffffffffP][6LLLLLLfffffffffP][7LLLLLLLffffffffffP]
+<Spider>L[RRffffLLLffff2P][LLffffRRRffff2P]
+<Wheel>LL4FFFFFPRRRRRRRR7[[1fffmP]rrrr[2fffmP]rrrr[3fffmP]rrrr[4fffmP]rrrr[5fffmP]rrrr[6fffmP]rrrr[mmmllllllllfffllllfffllllfffllllfffllllfffllllfff]]
+<Christmas>[llllllmmmmmmmmmmm1([bbfffPfP]LLL)2c3c4c5c6c7c][mmm1Pbbbbb2Plllmm3Pmmmllllllllm4Plllmmm5Prrrrrrrrrrmmm6Pllllmm7Prrrrrrrmmm1Prrrrrrmmmmmmmmmm2Prrrrmm3Prrrrrrmm4Pllllmmm5Prrmmm6Pllllllllmmm7Pllllmmm1Prrrrrrrrrrmmmmmm2Pllllllllmm3Plllllmmmm4Prrmmmmmmm5Prrrrrrrrmmm6Prrrrrrmmmm7P]rrrrrrmmmmmmmmmmmmmrrrrrr2frrrrrrfffllllllffffffffrrrrrrrrffffffllllllllfrrrrrrrrffffffllllllllfrrrrrrrrffffffllllllllfrrrrrrrrffffffrrrrrrrrffffffrrrrrrrrfllllllllffffffrrrrrrrrfllllllllffffffrrrrrrrrfllllllllffffffrrrrrrrrffffffffllllllfffrrrrrrf
+<Arms>EL1([fffffFffffRRRRRRRRRRRRPRfFfffPI]rr)2c3c4c5c6c1c2c3c4c5c6c
+<Boomerang>5LmmmmmmmmmmmRRRRRR(rrrrrrbbbllllllffffrrrPfrrrfrrrfrrrfffflllflllffffrrrfrrrfrrrfrrPrffffrfrrffrfrfrrrrrrrrmmm)LLLLLLLLL[4c]
+<Chaos>ffffrrrrffRfLfrPrrrrrrrrffffbbbbrrrrrrffff(rrfL)ccccccccccc(llfR)cccccccccccffff(lllllfLf)cccc7P
+<Hypmotize>PLLLLLLL(r[frfffffRRRRRrfffffrffffLLLfffffffr])1c2c3c4c5c6c7c1c2c3c4c5c6c7c1c2c3c4c5c6c7c1c2c
+<Morph>[R(frf)c[LLcc[RRcc[LLcc[RRcc[LLcc[RRcc[LLcc[RRcc[LLcc[RRcc[LLcc]]]]]]]]]]]][Lcc[RRcc[LLcc[RRcc[LLcc[RRcc[LLcc[RRcc[LLcc[RRcc[LLcc[RRcc]]]]]]]]]]]]
+<Orbit II>R1[mmRmmLmmlllfLblllffrrrrrrrPrrffrrrrrrrff]rrrrrrrrr2[mmRmmLmmmRfrrrrrrrrrffrrrrrrffrrrrrrffPrrrrrrff]R4[lllllmmmRmmmLmmmmrrmRbbllllPlfrPrfrPrfrPrfrPrfrPrfrPrfrPrfrPrfrPrfrPrfrPrf]
+<Rainbow>llllllbbbbbbL[R1CxxxxxxLxxxxxxxfLfxxxxxxLxxxxxxRRmmmmmmPmmPmmPmmPmmP]
+<Sixties>[{}RRmmmmmSllllllmmmmmmmmmmmIllllllmmmmmmRRRRJmmmmmmmmmmmW]CLxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxlllllllllllxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+<Slinky>LLLLLffff1L(flflflflflflflflflflflflflflflflflflflflflflflf)L2cL3cL4cL5cL6cL7cL1cL2cL3cL4cL5cL6cL7cL1cL2cL3cL4cL5cL6cL7cL1cL2cL3cL4cL5cL6cL7c
+<Spinner>L1([fffffFffffRRRRRRRRRRRRPRfFfffP]rr)2c3c4c5c6c1c2c3c4c5c6c
+<Two Wheels>BBBBBBBBBBBB[[RRmmmmR(ffffrrrrrrrffrrffbbrrrrrffffrrrrrr)1c2c3c4c5c][L(ffffrrrrrrrPffrrffbbrrrrrffffrrrrrr)1c2c3c4c5c]]

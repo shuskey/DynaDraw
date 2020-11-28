@@ -1,0 +1,78 @@
+BUG FIX / IMPROVE
+[ ] Cursor position visual only appears after a text update
+[ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue
+
+	======
+New Features:
+[/] Over All Controls:
+	 X Pause Animation
+	 X Change Speed of animation
+	 X Clear (clear text field)
+	 X Save (save current text) - perhaps using cookies for web publish version
+	 X Camera position (near/far)
+	 - Lighting options - Dark, spot light, or other lighting/fog settings
+[.] Put into GITHUB source code control
+[.] Publish a version to the Web
+[ ] Cooler, more interesting horizon/environment
+[ ] Add other cool 3D Objects: - make discoverable - so easy to add
+         Parameters: Assigned Letter "W", auto pilot rotate to direction true/false
+		 color settable, shooter offset/direction
+	 - Fruit
+	 - Flower
+	 - Coin like color disks
+	 - Transparent
+	 - IDX Logo
+	 - Lights
+[ ] Gamepad/Keyboard Controls (Triggers) - embedded into prefabs
+	 X Shoot Canon
+	 X Tilt control
+	 - Press/hold starts action (spin/spray/lights/lengthen) release stops
+[ ] Other Particle Physics effects
+	 - Smoke
+	 - Sparkle
+	 - Water Hose
+[ ] Make several different extendable Arm styles
+	 -X Cube based
+	 - Neon (light saber)
+	 - Rounded and cylinder
+	 - Robot arm style
+	 - Transperent
+	 - Other
+[ ] Add 3D Text of some kind
+
+[ ]	Prefabs that make noise (sound) - try it
+[ ] Other types of joints
+	- Rag Doll dangle
+[ ] Allow a second camera to be droped into the mix - Go for a Ride!
+	 ------
+	 
+[ ] Higher level language construct - Single Letters are a bit limiting
+	 - Allow for Trigger/Modifier/Thing/Action
+	 Perhaps this is like Dominion (Card Game) Cards
+	 
+	 Trigger types:
+		 None: Action happens continualy
+		 On Press Do action once
+		 On press toggle action on/off
+		 On Hold toggle action on
+		 Scaler value that can go up and down
+		 Scaler, Scaler - two degress of control - probably two axis rotation
+	 Modifier/Action:
+		 Zoom = Scaler (direction/scalse) Constant, cycling in/out or from Trigger
+		 Color = Scaler (color, intensity) Constant, rainbow cycle, from trigger
+		 (rotaters only) Rotation Amount = direction, Scaler Constant, continuous rotation, or from Trigger
+		 (arms/moves only) Length Amount = direction, Scaler Constant, cycling in/out, or from Trigger
+	 Thing/Action
+		 Particle: physics 	on/off, scaler adjuster (color, intensity)
+		 Light:				on off (color, intensity)
+		 Move:				direction positive/negative, length
+		 Arm:(choose type):				direction positive/negative, length + color
+		 Rotater:			
+		 Sound:
+		 Camera: Broadcast Camera 2 from here
+		 3DObject: (lots) - centered - listens to Zoom and rotation - no translation movement
+		  - Self orienting object (jet) is one type
+		  
+		  Move()
+		  Move().Length(Trigger)
+		 
