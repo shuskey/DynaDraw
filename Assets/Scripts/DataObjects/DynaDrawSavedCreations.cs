@@ -15,6 +15,7 @@ namespace Assets.Scripts.DataObjects
         public List<DynaDrawSavedItem> UserSaveCreationsList { get; set; }
 
         private readonly string saveFileName = "dynadrawsaves.json";
+        private const string playerPreferenceKey = "DynaDrawCreations";
 
         public void Add(string title, string commands)
         {
@@ -47,14 +48,16 @@ namespace Assets.Scripts.DataObjects
         public void SaveIntoJson()
         {
             string saveDataJson = JsonConvert.SerializeObject(this);
-            System.IO.File.WriteAllText(Application.persistentDataPath + $"/{saveFileName}", saveDataJson);
+            PlayerPrefs.SetString(playerPreferenceKey, saveDataJson);
+            //System.IO.File.WriteAllText(Application.persistentDataPath + $"/{saveFileName}", saveDataJson);
         }
 
         public void GetFromJson()
         {
             try
             {
-                var saveDataJson = System.IO.File.ReadAllText(Application.persistentDataPath + $"/{saveFileName}");
+                //var saveDataJson = System.IO.File.ReadAllText(Application.persistentDataPath + $"/{saveFileName}");
+                var saveDataJson = PlayerPrefs.GetString(playerPreferenceKey);
                 var stuffFromFile = JsonConvert.DeserializeObject<DynaDrawSavedCreations>(saveDataJson);
                 if (stuffFromFile.UserSaveComments == null || stuffFromFile.UserSaveCreationsList == null)
                 {
@@ -67,10 +70,9 @@ namespace Assets.Scripts.DataObjects
             catch
             {
                 Debug.Log($"Could not find or process file at {Application.persistentDataPath}/{saveFileName}, will start with notfound item.");
-                UserSaveComments = "No File Found";
-                UserSaveCreationsList = new List<DynaDrawSavedItem>() { new DynaDrawSavedItem("notfound", "") };
+                UserSaveComments = "Your own creation";
+                UserSaveCreationsList = new List<DynaDrawSavedItem>() { new DynaDrawSavedItem("Sample", "Rfrrrrrrfrrrrrrfrrrrrrf") };
             }
         }
-
     }
 }

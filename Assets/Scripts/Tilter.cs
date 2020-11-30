@@ -4,12 +4,10 @@ using System.Collections;
 
 public class Tilter : MonoBehaviour
 {    
-    public float Strength = 0.1f;
+    public float Strength = 1.0f;
     public int direction = 1;
     TilterControls tiltControl;
     Vector2 tilt;
-    Vector2 move;
-      
     
     void Start()
     {

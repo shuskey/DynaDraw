@@ -11,8 +11,8 @@ New Features:
 	 X Save (save current text) - perhaps using cookies for web publish version
 	 X Camera position (near/far)
 	 - Lighting options - Dark, spot light, or other lighting/fog settings
-[.] Put into GITHUB source code control
-[.] Publish a version to the Web
+[X] Put into GITHUB source code control
+[/] Publish a version to the Web
 [ ] Cooler, more interesting horizon/environment
 [ ] Add other cool 3D Objects: - make discoverable - so easy to add
          Parameters: Assigned Letter "W", auto pilot rotate to direction true/false

@@ -65,9 +65,6 @@ public class DrawStringScript : MonoBehaviour
 
     void ProcessDynaDrawCommand(string dynaDrawString, int startIndex, int endIndex)
     {
-        if (startIndex == endIndex)  // Someone typed a copy without any brackets, or there is nothing to draw
-            return;
-
         copySubString currentCopySubString = new copySubString(0,0);
         Stack<GameObject> headObjectStack = new Stack<GameObject>();
 
@@ -175,7 +172,8 @@ public class DrawStringScript : MonoBehaviour
                         currentCopySubString.endIndex = index;
                     }
                     break;
-                case 'c':   // Copy the recorded commands                   
+                case 'c':   // Copy the recorded commands   
+                    if (startIndex != endIndex)  // Someone may have typed a copy without any brackets, or there is nothing to draw
                         ProcessDynaDrawCommand(dynaDrawString, startIndex: currentCopySubString.startIndex, endIndex: currentCopySubString.endIndex);
                     break;
                 case 'f':   // Forward static
@@ -224,9 +222,9 @@ public class DrawStringScript : MonoBehaviour
                     rotateScript = go.GetComponentInChildren<RotateHorizontally>();
                     rotateScript.SetColor(currentColor, useDynamic: usingDynamicColor);
                     if (char.ToLower(dynaDrawCommand) == 'u')
-                        rotateScript.SetDiection(-1, 0, 0);
-                    else
                         rotateScript.SetDiection(1, 0, 0);
+                    else
+                        rotateScript.SetDiection(-1, 0, 0);
                     if (char.IsLower(dynaDrawCommand))
                         rotateScript.SetStatic(true);
                     else
