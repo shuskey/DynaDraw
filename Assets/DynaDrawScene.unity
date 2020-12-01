@@ -3198,6 +3198,7 @@ MonoBehaviour:
   fieldOfViewSlider: {fileID: 1986783611}
   showControlsToggle: {fileID: 1954602541}
   animationPaused: 0
+  DrawStringObject: {fileID: 1474959491}
 --- !u!4 &1592136200
 Transform:
   m_ObjectHideFlags: 0

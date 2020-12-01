@@ -20,9 +20,11 @@ public class StartUpInitialization : MonoBehaviour
     public Slider fieldOfViewSlider;
     public Toggle showControlsToggle;
     public bool animationPaused = false;
+    public GameObject DrawStringObject;
     private DynaDrawOriginalCreations dynaDrawOriginalCreations;
     private DynaDrawSavedCreations dynaDrawSavedCreations;
     private int currentDropdownSelectionIndex = 0;
+    private int savedCursorPosition = 0;
 
     private void Awake()
     {
@@ -164,6 +166,7 @@ public class StartUpInitialization : MonoBehaviour
 
     void ShowControlsToggleChanged(bool toggleIsOn)
     {
+        var drawStringScript = DrawStringObject.GetComponentInChildren<DrawStringScript>();
         for (int i = 0; i < canvasObject.transform.childCount - 1; i++ )
         {
             var go = canvasObject.transform.GetChild(i).gameObject;
@@ -171,6 +174,16 @@ public class StartUpInitialization : MonoBehaviour
                 continue;
             go.SetActive(toggleIsOn);            
         }
+       if (toggleIsOn)
+        {
+            drawStringScript.Redraw(savedCursorPosition);
+        }
+       else
+        {
+            savedCursorPosition = drawStringScript.GetCursorPosition();
+            drawStringScript.Redraw(-1);  // turn off cursor caret thing
+        }
+            
 
     }
 

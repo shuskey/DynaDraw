@@ -1,6 +1,9 @@
 BUG FIX / IMPROVE
 [ ] Cursor position visual only appears after a text update
 [ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue
+[ ] Webgl not running on iPad
+[ ] Globe resource has a Cyan haze in Webgl version
+[X] Turn Cursor Cones off when 'show controls' are OFF
 
 	======
 New Features:

@@ -58,9 +58,19 @@ public class DrawStringScript : MonoBehaviour
     public void Restart(string newCommands, int caretPosition)
     {
         dynaDrawCommands = newCommands;
+        Redraw(caretPosition);
+    }
+
+    public void Redraw(int caretPosition)
+    {
         cursorPosition = caretPosition;
         GameObject.Destroy(parentObject);
         Start();
+    }
+
+    public int GetCursorPosition()
+    {
+        return cursorPosition;
     }
 
     void ProcessDynaDrawCommand(string dynaDrawString, int startIndex, int endIndex)
