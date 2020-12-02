@@ -1,12 +1,20 @@
 BUG FIX / IMPROVE
-[ ] Cursor position visual only appears after a text update
+[ ] Cursor position visual only appears after a text update, should always be visible
 [ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue
 [ ] Webgl not running on iPad
-[ ] Globe resource has a Cyan haze in Webgl version
+[ ] Find out from itch.io how to pass parameters into the Web App from the itch.io URL
+[ ] Local save goes away every time I republish to itch.io - would a static URL help?
+[X] Globe resource has a Cyan haze in Webgl version
+[X] Webgl Sharable - Share icon - Create URL with Dyna String + accept Dyna String on URL
 [X] Turn Cursor Cones off when 'show controls' are OFF
 
 	======
 New Features:
+[ ] Add 3D Text of some kind
+[ ] Other types of joints
+	- Rag Doll dangle
+[ ] Cooler, more interesting horizon/environment
+[ ] add WASD kb control to tilt control
 [/] Over All Controls:
 	 X Pause Animation
 	 X Change Speed of animation
@@ -15,8 +23,7 @@ New Features:
 	 X Camera position (near/far)
 	 - Lighting options - Dark, spot light, or other lighting/fog settings
 [X] Put into GITHUB source code control
-[/] Publish a version to the Web
-[ ] Cooler, more interesting horizon/environment
+[X] Publish a version to the Web
 [ ] Add other cool 3D Objects: - make discoverable - so easy to add
          Parameters: Assigned Letter "W", auto pilot rotate to direction true/false
 		 color settable, shooter offset/direction
@@ -41,11 +48,9 @@ New Features:
 	 - Robot arm style
 	 - Transperent
 	 - Other
-[ ] Add 3D Text of some kind
 
 [ ]	Prefabs that make noise (sound) - try it
-[ ] Other types of joints
-	- Rag Doll dangle
+
 [ ] Allow a second camera to be droped into the mix - Go for a Ride!
 	 ------
 	 

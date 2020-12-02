@@ -60,6 +60,16 @@ public class DrawStringScript : MonoBehaviour
         dynaDrawCommands = newCommands;
         Redraw(caretPosition);
     }
+    public void SetDynaString(string newCommands)
+    {
+        dynaDrawCommands = newCommands;
+        Redraw(-1);
+    }
+
+    public string GetDynaString()
+    {
+        return dynaDrawCommands;
+    }
 
     public void Redraw(int caretPosition)
     {

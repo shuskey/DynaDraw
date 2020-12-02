@@ -5,6 +5,7 @@ using Assets.Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 using Assets.Scripts.DataObjects;
+using System.Runtime.InteropServices;
 
 public class StartUpInitialization : MonoBehaviour
 {
@@ -16,15 +17,20 @@ public class StartUpInitialization : MonoBehaviour
     public Button clearButton;
     public Button saveButton;
     public Button pauseButton;
+    public Button shareButton;
     public Slider speedSlider;
     public Slider fieldOfViewSlider;
     public Toggle showControlsToggle;
     public bool animationPaused = false;
-    public GameObject DrawStringObject;
+    public GameObject drawStringObject;
+    private string baseUrl;
     private DynaDrawOriginalCreations dynaDrawOriginalCreations;
     private DynaDrawSavedCreations dynaDrawSavedCreations;
     private int currentDropdownSelectionIndex = 0;
     private int savedCursorPosition = 0;
+
+    [DllImport("__Internal")]
+    private static extern void CopyToClipboard(string str);
 
     private void Awake()
     {
@@ -38,6 +44,7 @@ public class StartUpInitialization : MonoBehaviour
         clearButton.onClick.AddListener(delegate { ClearButtonClicked(); });
         saveButton.onClick.AddListener(delegate { SaveButtonClicked(); });
         pauseButton.onClick.AddListener(delegate { PauseButtonClicked(); });
+        shareButton.onClick.AddListener(delegate { ShareButtonClicked(); });
         speedSlider.onValueChanged.AddListener(delegate { SpeedSliderChanged(speedSlider.value); });
         fieldOfViewSlider.onValueChanged.AddListener(delegate { FieldOfViewSliderChanged(fieldOfViewSlider.value); });
         showControlsToggle.onValueChanged.AddListener(delegate { ShowControlsToggleChanged(showControlsToggle.isOn); });
@@ -147,6 +154,24 @@ public class StartUpInitialization : MonoBehaviour
         }
     }
 
+    void ShareButtonClicked()
+    {
+        var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
+        var dynaStringEncoded = System.Uri.EscapeUriString(drawStringScript.GetDynaString());
+        var dynaTitleEncoded = System.Uri.EscapeUriString(inputFieldTitle.text);
+        var webglUrl = Application.absoluteURL;
+        var stringToCopy = drawStringScript.GetDynaString();
+        if (!string.IsNullOrEmpty(webglUrl))
+        {
+            stringToCopy = $"{baseUrl}?dynastring={dynaStringEncoded}&dynatitle={dynaTitleEncoded}";
+            CopyToClipboard(stringToCopy);
+        }
+        else
+        {
+            GUIUtility.systemCopyBuffer = stringToCopy;
+        }
+    }
+
     void PauseButtonClicked()
     {
         if (animationPaused)
@@ -166,7 +191,7 @@ public class StartUpInitialization : MonoBehaviour
 
     void ShowControlsToggleChanged(bool toggleIsOn)
     {
-        var drawStringScript = DrawStringObject.GetComponentInChildren<DrawStringScript>();
+        var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
         for (int i = 0; i < canvasObject.transform.childCount - 1; i++ )
         {
             var go = canvasObject.transform.GetChild(i).gameObject;
@@ -182,8 +207,7 @@ public class StartUpInitialization : MonoBehaviour
         {
             savedCursorPosition = drawStringScript.GetCursorPosition();
             drawStringScript.Redraw(-1);  // turn off cursor caret thing
-        }
-            
+        }      
 
     }
 
@@ -194,7 +218,27 @@ public class StartUpInitialization : MonoBehaviour
         dynaDrawSavedCreations = new DynaDrawSavedCreations();
         dynaDrawSavedCreations.GetFromJson();
 
-        PopulateDropDown();    
+        PopulateDropDown();
+
+        var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
+
+        //Check for paramerters passed on URL for Webgl versions
+        var webglUrl = Application.absoluteURL;
+        if (!string.IsNullOrEmpty(webglUrl))
+        {
+            var myUri = new System.Uri(webglUrl);
+            var portUrlInt = myUri.Port;
+            var portUrlString = "";
+            if (portUrlInt != 80)
+                portUrlString = $":{portUrlInt}";
+            baseUrl = $"{myUri.Scheme}://{myUri.Host}{portUrlString}{myUri.LocalPath}";
+            var dynastring = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("dynastring");
+            var dynatitle = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("dynatitle");
+
+            inputFieldCommands.text = dynastring;
+            inputFieldTitle.text = dynatitle;
+            drawStringScript.SetDynaString(dynastring);
+        }
     }
 
     void PopulateDropDown()
