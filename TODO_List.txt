@@ -9,6 +9,7 @@ BUG FIX / IMPROVE
 [X] Turn Cursor Cones off when 'show controls' are OFF
 
 	======
+	
 New Features:
 [ ] Add 3D Text of some kind
 [ ] Other types of joints
