@@ -29,8 +29,8 @@ namespace Assets.Scripts.DataObjects
             OriginalCreationsList = new List<DynaDrawSavedItem>()
             {
                 new DynaDrawSavedItem("Choose from the below Masterpieces:",
-                ""),
-                // Michael R. Dunlavey
+                "U[IW][RmmmmKJP][([IR(fRfLfUfDf)cccc])(rrrcrrrcrrrcrrrcrrrcrrrcrrrc)"),                
+                // Michael R. Dunlavey 
                 new DynaDrawSavedItem("America",
                 "0llllll[LLffffffffRRRRRffff2Pf4Pf1P]"),
                 new DynaDrawSavedItem("Brain",
@@ -60,7 +60,7 @@ namespace Assets.Scripts.DataObjects
                 new DynaDrawSavedItem("Christmas",
                     "rrrrrr[llllllmmmmmmmmmmm1([bbfffPfP]LLL)2c3c4c5c6c7c][mmm1Pbbbbb2Plllmm3Pmmmllllllllm4Plllmmm5Prrrrrrrrrrmmm6Pllllmm7Prrrrrrrmmm1Prrrrrrmmmmmmmmmm2Prrrrmm3Prrrrrrmm4Pllllmmm5Prrmmm6Pllllllllmmm7Pllllmmm1Prrrrrrrrrrmmmmmm2Pllllllllmm3Plllllmmmm4Prrmmmmmmm5Prrrrrrrrmmm6Prrrrrrmmmm7P]rrrrrrmmmmmmmmmmmmmrrrrrr3frrrrrrfffllllllffffffffrrrrrrrrffffffllllllllfrrrrrrrrffffffllllllllfrrrrrrrrffffffllllllllfrrrrrrrrffffffrrrrrrrrffffffrrrrrrrrfllllllllffffffrrrrrrrrfllllllllffffffrrrrrrrrfllllllllffffffrrrrrrrrffffffffllllllfffrrrrrrf"),
                 // Scott Huskey Section
-        		        new DynaDrawSavedItem("Arms",
+        		new DynaDrawSavedItem("Arms",
                     "EL1([fffffFffffRRRRRRRRRRRRPRfFfffPI]rr)2c3c4c5c6c1c2c3c4c5c6c"),
                 new DynaDrawSavedItem("Boomerang",
                     "5LmmmmmmmmmmmRRRRRR(rrrrrrbbbllllllffffrrrPfrrrfrrrfrrrfffflllflllffffrrrfrrrfrrrfrrPrffffrfrrffrfrfrrrrrrrrmmm)LLLLLLLLL[4c]"),

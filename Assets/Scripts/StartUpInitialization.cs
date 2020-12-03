@@ -239,6 +239,12 @@ public class StartUpInitialization : MonoBehaviour
             inputFieldTitle.text = dynatitle;
             drawStringScript.SetDynaString(dynastring);
         }
+        else
+        {
+            // Startup Creation is at position 0
+            inputFieldCommands.text = dynaDrawOriginalCreations.OriginalCreationsList[0].DynaDrawCommands;
+            drawStringScript.SetDynaString(inputFieldCommands.text);
+        }
     }
 
     void PopulateDropDown()
