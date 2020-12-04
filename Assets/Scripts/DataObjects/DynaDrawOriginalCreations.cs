@@ -29,7 +29,7 @@ namespace Assets.Scripts.DataObjects
             OriginalCreationsList = new List<DynaDrawSavedItem>()
             {
                 new DynaDrawSavedItem("Choose from the below Masterpieces:",
-                "U[IW][RmmmmKJP][([IR(fRfLfUfDf)cccc])(rrrcrrrcrrrcrrrcrrrcrrrcrrrc)"),                
+                "[IW][RmmmmKJP][([IR(fRfLfUfDf)cccc])[(rrrcrrrcrrrcrrrcrrrcrrrcrrrc)]0[mmmmmmrrrMrrr\"HELLO\"]6[rrrrrrbbbbbbbbBbbbb\"WORLD\""),                
                 // Michael R. Dunlavey 
                 new DynaDrawSavedItem("America",
                 "0llllll[LLffffffffRRRRRffff2Pf4Pf1P]"),

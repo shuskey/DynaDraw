@@ -16,6 +16,7 @@ public class DrawStringScript : MonoBehaviour
     public GameObject sword_prefab;
     public GameObject tilter_prefab;
     public GameObject shooter_prefab;
+    public GameObject letterOpener_prefab;
     public float zoomFactor = 0.2f;  //20%
 
     private GameObject parentObject;
@@ -87,6 +88,8 @@ public class DrawStringScript : MonoBehaviour
     {
         copySubString currentCopySubString = new copySubString(0,0);
         Stack<GameObject> headObjectStack = new Stack<GameObject>();
+        copySubString lettersSubstring = new copySubString(-1, -1);
+        bool insideQuotes = false;
 
         if (cursorPosition == 0)
         {
@@ -105,6 +108,26 @@ public class DrawStringScript : MonoBehaviour
                 continue;  // ignore everything inside < >
             if (dynaDrawCommand == '<')
                 skippingStuffInsideAngleBrackets = true;
+
+            if (dynaDrawCommand == '"')  // remember this group of Characters, so it can be Displayed as letter gameobjects
+            {
+                if (!insideQuotes)
+                {
+                    lettersSubstring.startIndex = lettersSubstring.endIndex = index;
+                    insideQuotes = true;
+                }
+                else
+                {
+                    lettersSubstring.endIndex = index;
+                    var lengthOfString = lettersSubstring.endIndex - lettersSubstring.startIndex - 1;
+                    if (lengthOfString > 0)
+                        DisplayTheseLetters(dynaDrawString.Substring(lettersSubstring.startIndex + 1, lengthOfString));
+                    lettersSubstring.startIndex = lettersSubstring.endIndex = -1;
+                    insideQuotes = false;
+                }
+            }
+            if (insideQuotes)
+                continue;  // everything inside " " gets saved for a DisplayLetter call        
 
             if (char.IsDigit(dynaDrawCommand))
             {
@@ -191,7 +214,7 @@ public class DrawStringScript : MonoBehaviour
                         currentCopySubString = copySubStringStack.Pop();
                         currentCopySubString.endIndex = index;
                     }
-                    break;
+                    break;               
                 case 'c':   // Copy the recorded commands   
                     if (startIndex != endIndex)  // Someone may have typed a copy without any brackets, or there is nothing to draw
                         ProcessDynaDrawCommand(dynaDrawString, startIndex: currentCopySubString.startIndex, endIndex: currentCopySubString.endIndex);
@@ -278,6 +301,29 @@ public class DrawStringScript : MonoBehaviour
                 go = Instantiate(cursor_prefab, headObject.transform);
                 go.transform.SetParent(headObject.transform);
             }
+        }
+    }
+
+    private void DisplayTheseLetters(string lettersToDisplay)
+    {
+        var getPrefabForLetterScript = letterOpener_prefab.GetComponentInChildren<GetPrefabForLetter>();
+        
+        var arrayOfChars = lettersToDisplay.ToCharArray();
+        bool skipAngleBracket = false;
+        foreach (var nextCharater in arrayOfChars)
+        {
+            if (nextCharater == '<')
+                skipAngleBracket = true;
+            if (nextCharater == '>')
+                skipAngleBracket = false;
+            if (skipAngleBracket)
+                continue;           
+            var prefab = getPrefabForLetterScript.GetPrefab(nextCharater);
+            go = Instantiate(prefab, headObject.transform);
+            go.transform.SetParent(headObject.transform);
+            headObject = go;
+            var letterColoeScript = go.GetComponentInChildren<LetterColor>();
+            letterColoeScript.SetColor(currentColor, useDynamic: usingDynamicColor);
         }
     }
 
