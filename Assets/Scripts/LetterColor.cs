@@ -16,7 +16,8 @@ public class LetterColor : MonoBehaviour
     public void SetColor(Color color, bool useDynamic)
     {
         var children = GetComponentsInChildren<Renderer>();
-        children[0].material.color = color;
+        if (children.Length !=0)
+            children[0].material.color = color;
         useDynamicColor = useDynamic;
     }
 
