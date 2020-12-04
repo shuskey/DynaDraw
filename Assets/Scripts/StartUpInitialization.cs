@@ -236,9 +236,9 @@ public class StartUpInitialization : MonoBehaviour
             var dynatitle = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("dynatitle");
 
             if (string.IsNullOrEmpty(dynastring))
-                inputFieldCommands.text = dynaDrawOriginalCreations.OriginalCreationsList[0].DynaDrawCommands;
-            else
-                inputFieldCommands.text = dynastring;
+                dynastring = dynaDrawOriginalCreations.OriginalCreationsList[0].DynaDrawCommands;
+            
+            inputFieldCommands.text = dynastring;
             inputFieldTitle.text = dynatitle;
             drawStringScript.SetDynaString(dynastring);
         }
