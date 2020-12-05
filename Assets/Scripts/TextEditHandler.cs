@@ -9,6 +9,7 @@ public class TextEditHandler : MonoBehaviour
     private InputField textEdit;
     private DrawStringScript drawStringScript;
     private int currentCursorPosition = 0;
+    private bool lastTimeICheckedFocusWasTrue = false;
     
     // Start is called before the first frame update
     void Start()
@@ -29,10 +30,24 @@ public class TextEditHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (textEdit.caretPosition != currentCursorPosition)
+        if (!textEdit.isFocused) // does not have focus
         {
-            currentCursorPosition = textEdit.caretPosition;
-            drawStringScript.Restart(textEdit.text, currentCursorPosition);
+            if (lastTimeICheckedFocusWasTrue) // just lost focus
+            {
+                drawStringScript.Redraw(-1);  // turn off cursor caret thing
+                lastTimeICheckedFocusWasTrue = false;
+                return;
+            }
+        }
+        else  // does have focus
+        {
+            lastTimeICheckedFocusWasTrue = true;
+            if (textEdit.caretPosition != currentCursorPosition)
+            {
+                currentCursorPosition = textEdit.caretPosition;
+                drawStringScript.Restart(textEdit.text, currentCursorPosition);
+            }
+            return;
         }
     }
 }

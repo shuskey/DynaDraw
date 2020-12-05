@@ -83,6 +83,10 @@ public class DrawStringScript : MonoBehaviour
     {
         return cursorPosition;
     }
+    public void SetCursorPosition(int newCursorPosition)
+    {
+        cursorPosition = newCursorPosition;
+    }
 
     void ProcessDynaDrawCommand(string dynaDrawString, int startIndex, int endIndex)
     {

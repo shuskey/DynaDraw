@@ -1,10 +1,12 @@
 BUG FIX / IMPROVE
-[ ] Webgl not running on ios Mac
+[ ] Webgl not running on ios Mac/Safari
 [ ] Webgl not running on iPad
 [ ] Find out from itch.io how to pass parameters into the Web App from the itch.io URL
 [ ] Local save goes away every time I republish to itch.io - would a static URL help?
+    Perhaps look at hosting this myself
 [ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue
 [X] Cursor position visual only appears after a text update, should always be visible
+[X] Cursor not shown when edit field looses focus
 [X] Globe resource has a Cyan haze in Webgl version
 [X] Webgl Sharable - Share icon - Create URL with Dyna String + accept Dyna String on URL
 [X] Turn Cursor Cones off when 'show controls' are OFF
@@ -12,6 +14,7 @@ BUG FIX / IMPROVE
 	======
 	
 New Features:
+[X] Titlers and shooters should have a specific "look"
 [X] Add 3D Text of some kind
 [ ] Other types of joints
 	- Rag Doll dangle
