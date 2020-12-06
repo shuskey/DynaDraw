@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - No Hide
+  - Enemy
+  - Shoot
+  - Tilt
+  - ShootTilt
   layers:
   - Default
   - TransparentFX
