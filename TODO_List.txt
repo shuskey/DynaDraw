@@ -5,6 +5,7 @@ BUG FIX / IMPROVE
 [ ] Local save goes away every time I republish to itch.io - would a static URL help?
     Perhaps look at hosting this myself
 [ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue
+[ ] Shooter will shoot backwards at certain angles
 [X] Cursor position visual only appears after a text update, should always be visible
 [X] Cursor not shown when edit field looses focus
 [X] Globe resource has a Cyan haze in Webgl version
@@ -14,21 +15,11 @@ BUG FIX / IMPROVE
 	======
 	
 New Features:
-[X] Titlers and shooters should have a specific "look"
-[X] Add 3D Text of some kind
+
 [ ] Other types of joints
 	- Rag Doll dangle
 [ ] Cooler, more interesting horizon/environment
-[ ] add WASD kb control to tilt control
-[/] Over All Controls:
-	 X Pause Animation
-	 X Change Speed of animation
-	 X Clear (clear text field)
-	 X Save (save current text) - perhaps using cookies for web publish version
-	 X Camera position (near/far)
-	 - Lighting options - Dark, spot light, or other lighting/fog settings
-[X] Put into GITHUB source code control
-[X] Publish a version to the Web
+[ ] Lighting options - Dark, spot light, or other lighting/fog settings
 [ ] Add other cool 3D Objects: - make discoverable - so easy to add
          Parameters: Assigned Letter "W", auto pilot rotate to direction true/false
 		 color settable, shooter offset/direction
@@ -38,10 +29,7 @@ New Features:
 	 - Transparent
 	 - IDX Logo
 	 - Lights
-[ ] Gamepad/Keyboard Controls (Triggers) - embedded into prefabs
-	 X Shoot Canon
-	 X Tilt control
-	 - Press/hold starts action (spin/spray/lights/lengthen) release stops
+[ ]	 Press/hold starts action (spin/spray/lights/lengthen) release stops
 [ ] Other Particle Physics effects
 	 - Smoke
 	 - Sparkle
@@ -53,10 +41,24 @@ New Features:
 	 - Robot arm style
 	 - Transperent
 	 - Other
-
 [ ]	Prefabs that make noise (sound) - try it
-
 [ ] Allow a second camera to be droped into the mix - Go for a Ride!
+
+[X] Titlers and shooters should have a specific "look"
+[X] Add instructional graphics for keyboard and gamepad shooter/tilter usage
+[X] add Arrow kb control to tilt control
+[X] Add 3D Text of some kind
+[X] Gamepad/Keyboard Controls (Triggers) - embedded into prefabs
+	 X Shoot Canon
+	 X Tilt control
+[X] Over All Controls:
+	 X Pause Animation
+	 X Change Speed of animation
+	 X Clear (clear text field)
+	 X Save (save current text) - perhaps using cookies for web publish version
+	 X Camera position (near/far)	
+[X] Put into GITHUB source code control
+[X] Publish a version to the Web
 	 ------
 	 
 [ ] Higher level language construct - Single Letters are a bit limiting

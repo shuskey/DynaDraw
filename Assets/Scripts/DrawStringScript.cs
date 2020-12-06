@@ -17,6 +17,7 @@ public class DrawStringScript : MonoBehaviour
     public GameObject tilter_prefab;
     public GameObject shooter_prefab;
     public GameObject letterOpener_prefab;
+    public GameObject instructionalsObject;
     public float zoomFactor = 0.2f;  //20%
 
     private GameObject parentObject;
@@ -42,6 +43,8 @@ public class DrawStringScript : MonoBehaviour
     private Stack<copySubString>copySubStringStack = new Stack<copySubString>();
 
     Color currentColor;
+    bool usingShooter = false;
+    bool usingTitler = false;
     bool usingDynamicColor = false;
     bool skippingStuffInsideAngleBrackets = false;
 
@@ -50,6 +53,7 @@ public class DrawStringScript : MonoBehaviour
     {
         currentColor = Color.white;
         usingDynamicColor = false;
+        usingShooter = usingTitler = false;
         skippingStuffInsideAngleBrackets = false;
         headObject = parentObject = new GameObject();
         parentObject.transform.SetParent(this.transform);
@@ -74,7 +78,7 @@ public class DrawStringScript : MonoBehaviour
 
     public void Redraw(int caretPosition)
     {
-        cursorPosition = caretPosition;
+        cursorPosition = caretPosition;        
         GameObject.Destroy(parentObject);
         Start();
     }
@@ -144,6 +148,7 @@ public class DrawStringScript : MonoBehaviour
                 case 's':   // shooter
                     go = Instantiate(shooter_prefab, headObject.transform);
                     go.transform.SetParent(headObject.transform);
+                    usingShooter = true;
                     break;
                 case 't':   //Tilter
                     go = Instantiate(tilter_prefab, headObject.transform);
@@ -151,6 +156,7 @@ public class DrawStringScript : MonoBehaviour
                     tilterScript = go.GetComponentInChildren<Tilter>();
                     tilterScript.direction = 1;
                     headObject = go;
+                    usingTitler = true;
                     break;
                 case 'T':   //Tilter opposite direction
                     go = Instantiate(tilter_prefab, headObject.transform);
@@ -158,6 +164,7 @@ public class DrawStringScript : MonoBehaviour
                     tilterScript = go.GetComponentInChildren<Tilter>();
                     tilterScript.direction = -1;
                     headObject = go;
+                    usingTitler = true;
                     break;
                 case 'Z':   //Zoom in
                     go = new GameObject("ZoomIn");                    
@@ -306,6 +313,8 @@ public class DrawStringScript : MonoBehaviour
                 go.transform.SetParent(headObject.transform);
             }
         }
+        var instructionalScript = instructionalsObject.GetComponentInChildren<InputInstructionalScript>();
+        instructionalScript.SetInstructionVisibility(showShoot: usingShooter, showTilt: usingTitler);
     }
 
     private void DisplayTheseLetters(string lettersToDisplay)
