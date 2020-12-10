@@ -10,12 +10,14 @@ using System.Runtime.InteropServices;
 public class StartUpInitialization : MonoBehaviour
 {
     public Camera mainCamera;
+    public Light directionalLight;
     public Canvas canvasObject;
     public Dropdown dropdown;
     public InputField inputFieldTitle;
     public InputField inputFieldCommands;
     public Button clearButton;
     public Button saveButton;
+    public Button changeSceneButton;
     public Button pauseButton;
     public Button shareButton;
     public Slider speedSlider;
@@ -23,9 +25,14 @@ public class StartUpInitialization : MonoBehaviour
     public Toggle showControlsToggle;
     public bool animationPaused = false;
     public GameObject drawStringObject;
+    public List<string> sceneTitles;
+    public List<Material> skyBoxMaterial;
+    public List<float> sceneIntensity;
     private string baseUrl;
     private DynaDrawOriginalCreations dynaDrawOriginalCreations;
     private DynaDrawSavedCreations dynaDrawSavedCreations;
+    private SceneDefinitionPresets sceneDefinitionPresets;
+    private bool skyBoxMaterialChanged = false;
     private int currentDropdownSelectionIndex = 0;
     private int savedCursorPosition = 0;
 
@@ -34,6 +41,14 @@ public class StartUpInitialization : MonoBehaviour
 
     private void Awake()
     {
+        sceneDefinitionPresets = new SceneDefinitionPresets();
+        int index = 0;
+        foreach (var sceneTitle in sceneTitles)
+        {
+            SceneDefinition addThisScene = new SceneDefinition(sceneTitles[index], skyBoxMaterial[index], sceneIntensity[index]);
+            sceneDefinitionPresets.AddPreset(addThisScene);
+            index++;
+        }
         var textEditTitle = inputFieldTitle.transform.GetComponent<InputField>();
         textEditTitle.onValueChanged.AddListener(delegate { TextEditTitleValueChanged(); });
         var textEditCommands = inputFieldCommands.transform.GetComponent<InputField>();
@@ -44,6 +59,7 @@ public class StartUpInitialization : MonoBehaviour
         clearButton.onClick.AddListener(delegate { ClearButtonClicked(); });
         saveButton.onClick.AddListener(delegate { SaveButtonClicked(); });
         pauseButton.onClick.AddListener(delegate { PauseButtonClicked(); });
+        changeSceneButton.onClick.AddListener(delegate { ChangeSceneButtonClicked(); });
         shareButton.onClick.AddListener(delegate { ShareButtonClicked(); });
         speedSlider.onValueChanged.AddListener(delegate { SpeedSliderChanged(speedSlider.value); });
         fieldOfViewSlider.onValueChanged.AddListener(delegate { FieldOfViewSliderChanged(fieldOfViewSlider.value); });
@@ -189,6 +205,22 @@ public class StartUpInitialization : MonoBehaviour
         animationPaused = !animationPaused;
     }
 
+    void ChangeSceneButtonClicked()
+    {
+        ChangeToNextScene();      
+    }
+    private void ChangeToNextScene()
+    {
+        var nextScene = sceneDefinitionPresets.getNextPreset();
+        // var skyBoxMaterial = mainCamera.GetComponentInChildren<Skybox>().material;
+        // skyBoxMaterial = nextScene.SkyBoxMaterial;
+        RenderSettings.skybox = nextScene.SkyBoxMaterial;
+        mainCamera.GetComponentInChildren<Skybox>().material = nextScene.SkyBoxMaterial;
+        directionalLight.intensity = nextScene.DirectionalLightIntensity;
+
+        skyBoxMaterialChanged = true;
+    }
+
     void ShowControlsToggleChanged(bool toggleIsOn)
     {
         var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
@@ -248,6 +280,8 @@ public class StartUpInitialization : MonoBehaviour
             inputFieldCommands.text = dynaDrawOriginalCreations.OriginalCreationsList[0].DynaDrawCommands;
             drawStringScript.SetDynaString(inputFieldCommands.text);
         }
+
+        ChangeToNextScene();
     }
 
     void PopulateDropDown()
@@ -260,6 +294,12 @@ public class StartUpInitialization : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (skyBoxMaterialChanged)
+        {
+            DynamicGI.UpdateEnvironment();
+            skyBoxMaterialChanged = false;
+        }
         
+        //            RenderSettings.skybox.SetFloat("_Rotation", Time.time * 0.4f);
     }
 }

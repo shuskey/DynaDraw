@@ -18,7 +18,7 @@ New Features:
 
 [ ] Other types of joints
 	- Rag Doll dangle
-[ ] Cooler, more interesting horizon/environment
+[X] Cooler, more interesting horizon/environment
 [ ] Lighting options - Dark, spot light, or other lighting/fog settings
 [ ] Add other cool 3D Objects: - make discoverable - so easy to add
          Parameters: Assigned Letter "W", auto pilot rotate to direction true/false
