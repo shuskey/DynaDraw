@@ -24,6 +24,11 @@ namespace Assets.Scripts.DataObjects
             PresetSceneDefinitions.Add(newPreset);
         }
 
+        public SceneDefinition sceneSet(string sceneTitle)
+        {
+            return  PresetSceneDefinitions.SingleOrDefault(s => s.Title.ToLower() == sceneTitle.ToLower());        
+        }
+
         public SceneDefinition getNextPreset()
         {
             int numberOfPresets = PresetSceneDefinitions.Count;

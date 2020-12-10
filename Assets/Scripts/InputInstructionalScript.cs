@@ -13,12 +13,22 @@ public class InputInstructionalScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+    }
+
+    private void Awake()
+    {
+        GetAllInstructionalsAndMakeNotVisible();
+    }
+
+    private void GetAllInstructionalsAndMakeNotVisible()
+    {
         allShootInstructionals = GameObject.FindGameObjectsWithTag("Shoot");
         allTiltInstructionals = GameObject.FindGameObjectsWithTag("Tilt");
         allShootTiltInstructionals = GameObject.FindGameObjectsWithTag("ShootTilt");
         allInstructionals = allShootInstructionals.Concat(allTiltInstructionals).ToArray().Concat(allShootTiltInstructionals).ToArray();
 
-        foreach (var instructional in allInstructionals)        
+        foreach (var instructional in allInstructionals)
             instructional.SetActive(false);
     }
 

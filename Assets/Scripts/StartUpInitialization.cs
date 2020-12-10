@@ -32,6 +32,7 @@ public class StartUpInitialization : MonoBehaviour
     private DynaDrawOriginalCreations dynaDrawOriginalCreations;
     private DynaDrawSavedCreations dynaDrawSavedCreations;
     private SceneDefinitionPresets sceneDefinitionPresets;
+    private string currentSceneName = "";
     private bool skyBoxMaterialChanged = false;
     private int currentDropdownSelectionIndex = 0;
     private int savedCursorPosition = 0;
@@ -175,11 +176,15 @@ public class StartUpInitialization : MonoBehaviour
         var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
         var dynaStringEncoded = System.Uri.EscapeUriString(drawStringScript.GetDynaString());
         var dynaTitleEncoded = System.Uri.EscapeUriString(inputFieldTitle.text);
+        var dynaSceneNameEncoded = System.Uri.EscapeUriString("djdjd");
+        var dynaFieldOfViewEncoded = System.Uri.EscapeUriString(mainCamera.fieldOfView.ToString()); 
+        var dynaSpeedEncoded = System.Uri.EscapeUriString(Time.timeScale.ToString()); 
         var webglUrl = Application.absoluteURL;
         var stringToCopy = drawStringScript.GetDynaString();
         if (!string.IsNullOrEmpty(webglUrl))
         {
             stringToCopy = $"{baseUrl}?dynastring={dynaStringEncoded}&dynatitle={dynaTitleEncoded}";
+            stringToCopy += $"&scene={dynaSceneNameEncoded}&view={dynaFieldOfViewEncoded}&speed={dynaSpeedEncoded}";
             CopyToClipboard(stringToCopy);
         }
         else
@@ -217,6 +222,8 @@ public class StartUpInitialization : MonoBehaviour
         RenderSettings.skybox = nextScene.SkyBoxMaterial;
         mainCamera.GetComponentInChildren<Skybox>().material = nextScene.SkyBoxMaterial;
         directionalLight.intensity = nextScene.DirectionalLightIntensity;
+
+        currentSceneName = nextScene.Title;
 
         skyBoxMaterialChanged = true;
     }
@@ -266,6 +273,16 @@ public class StartUpInitialization : MonoBehaviour
             baseUrl = $"{myUri.Scheme}://{myUri.Host}{portUrlString}{myUri.LocalPath}";
             var dynastring = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("dynastring");
             var dynatitle = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("dynatitle");
+            var dynascene = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("scene");
+            var dynaview = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("view");
+            var dynaspeed = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("speed");
+
+            if (!string.IsNullOrEmpty(dynascene))
+                sceneDefinitionPresets.sceneSet(dynascene);
+            if (!string.IsNullOrEmpty(dynaview))
+                mainCamera.fieldOfView = float.Parse(dynaview, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+            if (!string.IsNullOrEmpty(dynaspeed))
+                Time.timeScale = float.Parse(dynaspeed, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 
             if (string.IsNullOrEmpty(dynastring))
                 dynastring = dynaDrawOriginalCreations.OriginalCreationsList[0].DynaDrawCommands;
@@ -280,6 +297,9 @@ public class StartUpInitialization : MonoBehaviour
             inputFieldCommands.text = dynaDrawOriginalCreations.OriginalCreationsList[0].DynaDrawCommands;
             drawStringScript.SetDynaString(inputFieldCommands.text);
         }
+
+        showControlsToggle.isOn = false;
+      //  ShowControlsToggleChanged(false);
 
         ChangeToNextScene();
     }
