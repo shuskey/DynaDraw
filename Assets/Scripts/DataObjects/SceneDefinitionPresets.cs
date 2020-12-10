@@ -1,10 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 
 namespace Assets.Scripts.DataObjects
 {
@@ -24,9 +19,14 @@ namespace Assets.Scripts.DataObjects
             PresetSceneDefinitions.Add(newPreset);
         }
 
-        public SceneDefinition sceneSet(string sceneTitle)
+        public SceneDefinition getSpecific(string sceneTitle)
         {
             return  PresetSceneDefinitions.SingleOrDefault(s => s.Title.ToLower() == sceneTitle.ToLower());        
+        }
+
+        public SceneDefinition getFirstPreset()
+        {
+            return PresetSceneDefinitions.FirstOrDefault();
         }
 
         public SceneDefinition getNextPreset()

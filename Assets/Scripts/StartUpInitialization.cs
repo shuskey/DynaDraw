@@ -176,7 +176,7 @@ public class StartUpInitialization : MonoBehaviour
         var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
         var dynaStringEncoded = System.Uri.EscapeUriString(drawStringScript.GetDynaString());
         var dynaTitleEncoded = System.Uri.EscapeUriString(inputFieldTitle.text);
-        var dynaSceneNameEncoded = System.Uri.EscapeUriString("djdjd");
+        var dynaSceneNameEncoded = System.Uri.EscapeUriString(currentSceneName);
         var dynaFieldOfViewEncoded = System.Uri.EscapeUriString(mainCamera.fieldOfView.ToString()); 
         var dynaSpeedEncoded = System.Uri.EscapeUriString(Time.timeScale.ToString()); 
         var webglUrl = Application.absoluteURL;
@@ -211,12 +211,11 @@ public class StartUpInitialization : MonoBehaviour
     }
 
     void ChangeSceneButtonClicked()
-    {
-        ChangeToNextScene();      
+    {        
+        ChangeToThisScene(sceneDefinitionPresets.getNextPreset());      
     }
-    private void ChangeToNextScene()
-    {
-        var nextScene = sceneDefinitionPresets.getNextPreset();
+    private void ChangeToThisScene(SceneDefinition nextScene)
+    {        
         // var skyBoxMaterial = mainCamera.GetComponentInChildren<Skybox>().material;
         // skyBoxMaterial = nextScene.SkyBoxMaterial;
         RenderSettings.skybox = nextScene.SkyBoxMaterial;
@@ -259,6 +258,8 @@ public class StartUpInitialization : MonoBehaviour
 
         PopulateDropDown();
 
+        var firstScene = sceneDefinitionPresets.getFirstPreset();
+
         var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
 
         //Check for paramerters passed on URL for Webgl versions
@@ -278,11 +279,18 @@ public class StartUpInitialization : MonoBehaviour
             var dynaspeed = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("speed");
 
             if (!string.IsNullOrEmpty(dynascene))
-                sceneDefinitionPresets.sceneSet(dynascene);
+                firstScene = sceneDefinitionPresets.getSpecific(dynascene);
+
             if (!string.IsNullOrEmpty(dynaview))
-                mainCamera.fieldOfView = float.Parse(dynaview, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+            {
+                fieldOfViewSlider.value = float.Parse(dynaview, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                mainCamera.fieldOfView = fieldOfViewSlider.value;
+            }
             if (!string.IsNullOrEmpty(dynaspeed))
-                Time.timeScale = float.Parse(dynaspeed, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+            {
+                speedSlider.value = float.Parse(dynaspeed, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                Time.timeScale = speedSlider.value;
+            }
 
             if (string.IsNullOrEmpty(dynastring))
                 dynastring = dynaDrawOriginalCreations.OriginalCreationsList[0].DynaDrawCommands;
@@ -301,7 +309,7 @@ public class StartUpInitialization : MonoBehaviour
         showControlsToggle.isOn = false;
       //  ShowControlsToggleChanged(false);
 
-        ChangeToNextScene();
+        ChangeToThisScene(firstScene);
     }
 
     void PopulateDropDown()
