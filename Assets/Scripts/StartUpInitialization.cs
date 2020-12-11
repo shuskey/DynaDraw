@@ -28,6 +28,8 @@ public class StartUpInitialization : MonoBehaviour
     public List<string> sceneTitles;
     public List<Material> skyBoxMaterial;
     public List<float> sceneIntensity;
+    private float initialFieldOfView;
+    private float initialSpeed;
     private string baseUrl;
     private DynaDrawOriginalCreations dynaDrawOriginalCreations;
     private DynaDrawSavedCreations dynaDrawSavedCreations;
@@ -65,6 +67,9 @@ public class StartUpInitialization : MonoBehaviour
         speedSlider.onValueChanged.AddListener(delegate { SpeedSliderChanged(speedSlider.value); });
         fieldOfViewSlider.onValueChanged.AddListener(delegate { FieldOfViewSliderChanged(fieldOfViewSlider.value); });
         showControlsToggle.onValueChanged.AddListener(delegate { ShowControlsToggleChanged(showControlsToggle.isOn); });
+
+        initialFieldOfView = mainCamera.fieldOfView;
+        initialSpeed = Time.timeScale;
     }
 
     void TextEditTitleValueChanged()
@@ -132,6 +137,13 @@ public class StartUpInitialization : MonoBehaviour
         saveButton.interactable = false;
         dropdown.value = 0;
         currentDropdownSelectionIndex = 0;
+
+        unPauseAnimation();
+
+        fieldOfViewSlider.value = initialFieldOfView;
+        mainCamera.fieldOfView = fieldOfViewSlider.value;
+        speedSlider.value = initialSpeed;
+        Time.timeScale = speedSlider.value;
     }
     
     void SaveButtonClicked()
@@ -197,10 +209,7 @@ public class StartUpInitialization : MonoBehaviour
     {
         if (animationPaused)
         {
-            if (speedSlider.value == 0) // If we un-pause and the slider is zero, set it to 1
-                speedSlider.value = 1;
-            Time.timeScale = speedSlider.value;                     
-            pauseButton.GetComponentInChildren<Text>().text = "Pause";
+            unPauseAnimation();
         }
         else
         {                        
@@ -208,6 +217,14 @@ public class StartUpInitialization : MonoBehaviour
             pauseButton.GetComponentInChildren<Text>().text = "Run";
         }
         animationPaused = !animationPaused;
+    }
+
+    void unPauseAnimation()
+    {
+        if (speedSlider.value == 0) // If we un-pause and the slider is zero, set it to 1
+            speedSlider.value = 1;
+        Time.timeScale = speedSlider.value;
+        pauseButton.GetComponentInChildren<Text>().text = "Pause";
     }
 
     void ChangeSceneButtonClicked()
@@ -328,6 +345,6 @@ public class StartUpInitialization : MonoBehaviour
             skyBoxMaterialChanged = false;
         }
         
-        //            RenderSettings.skybox.SetFloat("_Rotation", Time.time * 0.4f);
+        RenderSettings.skybox.SetFloat("_Rotation", Time.time * 0.075f);
     }
 }

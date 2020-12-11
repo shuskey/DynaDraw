@@ -7,7 +7,7 @@ namespace Assets.Scripts.DataObjects
     public class SceneDefinitionPresets
     {
         public List<SceneDefinition> PresetSceneDefinitions { get; set; }
-        int currentPresetIndex = -1;
+        int currentPresetIndex = 0;
 
         public SceneDefinitionPresets()
         {
@@ -21,7 +21,10 @@ namespace Assets.Scripts.DataObjects
 
         public SceneDefinition getSpecific(string sceneTitle)
         {
-            return  PresetSceneDefinitions.SingleOrDefault(s => s.Title.ToLower() == sceneTitle.ToLower());        
+            currentPresetIndex = PresetSceneDefinitions.FindIndex(s => s.Title.ToLower() == sceneTitle.ToLower());
+            if (currentPresetIndex == -1)
+                currentPresetIndex = 0;
+            return PresetSceneDefinitions[currentPresetIndex];        
         }
 
         public SceneDefinition getFirstPreset()
