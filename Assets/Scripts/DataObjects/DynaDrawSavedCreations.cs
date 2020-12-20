@@ -17,9 +17,9 @@ namespace Assets.Scripts.DataObjects
         private readonly string saveFileName = "dynadrawsaves.json";
         private const string playerPreferenceKey = "DynaDrawCreations";
 
-        public void Add(string title, string commands)
+        public void Add(string title, string commands, string sceneName, float fieldOfView, float timeScale)
         {
-            UserSaveCreationsList.Add(new DynaDrawSavedItem(title, commands));
+            UserSaveCreationsList.Add(new DynaDrawSavedItem(title, commands, sceneName, fieldOfView.ToString(), timeScale.ToString()));
             SaveIntoJson();
         }
 
@@ -29,10 +29,14 @@ namespace Assets.Scripts.DataObjects
             UserSaveCreationsList.Remove(itemToRemove);
             SaveIntoJson();
         }
-        public void Update(int index, string title, string commands)
+        public void Update(int index, string title, string commands, string sceneName, string fieldOfView, string timeScale)
         {
             UserSaveCreationsList[index].Title = title;
             UserSaveCreationsList[index].DynaDrawCommands = commands;
+            UserSaveCreationsList[index].SceneName = sceneName;
+            UserSaveCreationsList[index].FieldOfView = fieldOfView;
+            UserSaveCreationsList[index].TimeScale = timeScale;
+            SaveIntoJson();
         }
 
         public List<string> JustTitles()
@@ -66,13 +70,13 @@ namespace Assets.Scripts.DataObjects
                 }
                 UserSaveComments = stuffFromFile.UserSaveComments;
                 UserSaveCreationsList = stuffFromFile.UserSaveCreationsList;
-            }
+        }
             catch
             {
                 Debug.Log($"Could not find or process file at {Application.persistentDataPath}/{saveFileName}, will start with notfound item.");
                 UserSaveComments = "Your own creation";
-                UserSaveCreationsList = new List<DynaDrawSavedItem>() { new DynaDrawSavedItem("Sample", "Rfrrrrrrfrrrrrrfrrrrrrf") };
-            }
+                UserSaveCreationsList = new List<DynaDrawSavedItem>() { new DynaDrawSavedItem("Sample", "Rfrrrrrrfrrrrrrfrrrrrrf", "", "", "") };
+}
         }
     }
 }

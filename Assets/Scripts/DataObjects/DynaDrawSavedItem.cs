@@ -12,13 +12,19 @@ namespace Assets.Scripts.DataObjects
     {
         public string Title { get; set; }
         public string DynaDrawCommands { get; set; }
+        public string SceneName { get; set; }
+        public string FieldOfView { get; set; }
+        public string TimeScale { get; set; }
 
-        public DynaDrawSavedItem(string title, string dynadrawcommands)
+
+        public DynaDrawSavedItem(string title, string dynadrawcommands, string sceneName, string fieldOfView, string timeScale)
         {
             Title = title;
             DynaDrawCommands = dynadrawcommands;
+            SceneName = sceneName;
+            FieldOfView = fieldOfView;
+            TimeScale = timeScale;
         }
-        
     }
     
 }

@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 public class StartUpInitialization : MonoBehaviour
 {
     public Camera mainCamera;
+    public float defaultFieldOfView = 60.0f;
     public Light directionalLight;
     public Canvas canvasObject;
     public Dropdown dropdown;
@@ -19,6 +20,8 @@ public class StartUpInitialization : MonoBehaviour
     public Button saveButton;
     public Button changeSceneButton;
     public Button pauseButton;
+    public Button helpButton;
+    public string instructionsUrl;
     public Button shareButton;
     public Slider speedSlider;
     public Slider fieldOfViewSlider;
@@ -42,6 +45,9 @@ public class StartUpInitialization : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void CopyToClipboard(string str);
 
+    [DllImport("__Internal")]
+    private static extern void OpenNewTab(string url);
+
     private void Awake()
     {
         sceneDefinitionPresets = new SceneDefinitionPresets();
@@ -64,6 +70,7 @@ public class StartUpInitialization : MonoBehaviour
         pauseButton.onClick.AddListener(delegate { PauseButtonClicked(); });
         changeSceneButton.onClick.AddListener(delegate { ChangeSceneButtonClicked(); });
         shareButton.onClick.AddListener(delegate { ShareButtonClicked(); });
+        helpButton.onClick.AddListener(delegate { HelpButtonClicked(); });
         speedSlider.onValueChanged.AddListener(delegate { SpeedSliderChanged(speedSlider.value); });
         fieldOfViewSlider.onValueChanged.AddListener(delegate { FieldOfViewSliderChanged(fieldOfViewSlider.value); });
         showControlsToggle.onValueChanged.AddListener(delegate { ShowControlsToggleChanged(showControlsToggle.isOn); });
@@ -80,8 +87,13 @@ public class StartUpInitialization : MonoBehaviour
 
     void TextEditCommandsValueChanged()
     {
+        SaveOrUpdatableActionOccured();
+    }
+
+    void SaveOrUpdatableActionOccured()
+    {
         if (currentDropdownSelectionIndex < dynaDrawOriginalCreations.OriginalCreationsList.Count) //Editing an Original Creation -> potentially save it as new       
-            saveButton.GetComponentInChildren<Text>().text = "Save";            
+            saveButton.GetComponentInChildren<Text>().text = "Save";
         if (saveButton.GetComponentInChildren<Text>().text != "Save")  // if title was changed, this will still be a save
             saveButton.GetComponentInChildren<Text>().text = "Update";
         saveButton.interactable = true;
@@ -89,28 +101,75 @@ public class StartUpInitialization : MonoBehaviour
 
     void DropDownValueChanged(int index)
     {
+        var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
         var originalCreationsListSize = dynaDrawOriginalCreations.OriginalCreationsList.Count;
         currentDropdownSelectionIndex = index;
-        if (index == 0)
+        if (index == 0)  // Selected the Title of the Dropdown
         {
-            inputFieldCommands.text = "";
             inputFieldTitle.text = "";
+            drawStringScript.SetDynaString(inputFieldCommands.text = "");            
+
             saveButton.GetComponentInChildren<Text>().text = "Save";
             saveButton.interactable = false;
             return;
         }
-        if (index < originalCreationsListSize)
+        if (index < originalCreationsListSize)  // Prefabs original creations - not editable, nor deletable
         {
-            inputFieldCommands.text = dynaDrawOriginalCreations.OriginalCreationsList[index].DynaDrawCommands;
-            inputFieldTitle.text = dynaDrawOriginalCreations.OriginalCreationsList[index].Title;
+            var selectedDynaDrawOriginalItem = dynaDrawOriginalCreations.OriginalCreationsList[index];
+            inputFieldTitle.text = selectedDynaDrawOriginalItem.Title;
+            drawStringScript.SetDynaString(inputFieldCommands.text = selectedDynaDrawOriginalItem.DynaDrawCommands);
+            
+            ChangeToThisScene(sceneDefinitionPresets.getSpecific(selectedDynaDrawOriginalItem.SceneName ?? sceneTitles[0]));
+            var dynaview =  selectedDynaDrawOriginalItem.FieldOfView;
+            var dynaspeed = selectedDynaDrawOriginalItem.TimeScale;
+
+            if (!string.IsNullOrEmpty(dynaview))
+            {
+                fieldOfViewSlider.value = float.Parse(dynaview, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                //mainCamera.fieldOfView = fieldOfViewSlider.value;
+            }
+            else
+                fieldOfViewSlider.value = defaultFieldOfView;
+
+            if (!string.IsNullOrEmpty(dynaspeed))
+            {
+                speedSlider.value = float.Parse(dynaspeed, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                //Time.timeScale = speedSlider.value;
+            }
+            else
+                speedSlider.value = 1.0f;
+
             saveButton.GetComponentInChildren<Text>().text = "Delete";
             saveButton.interactable = false;
             return;
         }
-        if (index > originalCreationsListSize)
+        if (index > originalCreationsListSize)  // Here is the users own saved items
         {
-            inputFieldCommands.text = dynaDrawSavedCreations.UserSaveCreationsList[index - originalCreationsListSize - 1].DynaDrawCommands;
-            inputFieldTitle.text = dynaDrawSavedCreations.UserSaveCreationsList[index - originalCreationsListSize - 1].Title;
+            var selectedDynaDrawSavedItem = dynaDrawSavedCreations.UserSaveCreationsList[index - originalCreationsListSize - 1];
+            inputFieldTitle.text = selectedDynaDrawSavedItem.Title;
+            drawStringScript.SetDynaString(inputFieldCommands.text = selectedDynaDrawSavedItem.DynaDrawCommands);
+            
+            ChangeToThisScene(sceneDefinitionPresets.getSpecific(selectedDynaDrawSavedItem.SceneName ?? sceneTitles[0]));
+
+            var dynaview = selectedDynaDrawSavedItem.FieldOfView;
+            var dynaspeed = selectedDynaDrawSavedItem.TimeScale;
+
+            if (!string.IsNullOrEmpty(dynaview))
+            {
+                fieldOfViewSlider.value = float.Parse(dynaview, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                //mainCamera.fieldOfView = fieldOfViewSlider.value;
+            }
+            else
+                fieldOfViewSlider.value = defaultFieldOfView;
+
+            if (!string.IsNullOrEmpty(dynaspeed))
+            {
+                speedSlider.value = float.Parse(dynaspeed, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+                //Time.timeScale = speedSlider.value;
+            }
+            else
+                speedSlider.value = 1.0f;
+
             saveButton.GetComponentInChildren<Text>().text = "Delete";
             saveButton.interactable = true;
             return;
@@ -122,11 +181,15 @@ public class StartUpInitialization : MonoBehaviour
         Time.timeScale = newTimeScale;
         if (newTimeScale != 0 && animationPaused) //Unpause is we take this slider off zero
             PauseButtonClicked();
+
+        SaveOrUpdatableActionOccured();
     }
 
     void FieldOfViewSliderChanged(float newFieldOfViewValue)
     {
         mainCamera.fieldOfView = newFieldOfViewValue;
+
+        SaveOrUpdatableActionOccured();
     }
 
     void ClearButtonClicked()
@@ -141,9 +204,9 @@ public class StartUpInitialization : MonoBehaviour
         unPauseAnimation();
 
         fieldOfViewSlider.value = initialFieldOfView;
-        mainCamera.fieldOfView = fieldOfViewSlider.value;
+        //mainCamera.fieldOfView = fieldOfViewSlider.value;
         speedSlider.value = initialSpeed;
-        Time.timeScale = speedSlider.value;
+        //Time.timeScale = speedSlider.value;
     }
     
     void SaveButtonClicked()
@@ -154,7 +217,7 @@ public class StartUpInitialization : MonoBehaviour
             if (inputFieldTitle.text.Length != 0)
                 title = inputFieldTitle.text;
 
-            dynaDrawSavedCreations.Add(title, inputFieldCommands.text);
+            dynaDrawSavedCreations.Add(title, inputFieldCommands.text, sceneName: currentSceneName, fieldOfView: mainCamera.fieldOfView, timeScale: Time.timeScale);
             dropdown.AddOptions(new List<string>() { title });
             
             dropdown.value = currentDropdownSelectionIndex = dropdown.options.Count - 1;
@@ -169,7 +232,7 @@ public class StartUpInitialization : MonoBehaviour
             if (inputFieldTitle.text.Length != 0)
                 title = inputFieldTitle.text;
 
-            dynaDrawSavedCreations.Update(currentDropdownSelectionIndex - dynaDrawOriginalCreations.OriginalCreationsList.Count - 1, title, inputFieldCommands.text);
+            dynaDrawSavedCreations.Update(currentDropdownSelectionIndex - dynaDrawOriginalCreations.OriginalCreationsList.Count - 1, title, inputFieldCommands.text, sceneName: currentSceneName, fieldOfView: mainCamera.fieldOfView.ToString(), timeScale: Time.timeScale.ToString());
             saveButton.GetComponentInChildren<Text>().text = "Delete";
             saveButton.interactable = false;
             return;
@@ -183,7 +246,16 @@ public class StartUpInitialization : MonoBehaviour
         }
     }
 
-    void ShareButtonClicked()
+    void HelpButtonClicked()
+    {
+#if !UNITY_EDITOR && UNITY_WEBGL
+        OpenNewTab(instructionsUrl);
+#else
+        Application.OpenURL(instructionsUrl);
+#endif
+     }
+
+        void ShareButtonClicked()
     {
         var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
         var dynaStringEncoded = System.Uri.EscapeUriString(drawStringScript.GetDynaString());
@@ -229,8 +301,12 @@ public class StartUpInitialization : MonoBehaviour
 
     void ChangeSceneButtonClicked()
     {        
-        ChangeToThisScene(sceneDefinitionPresets.getNextPreset());      
+        ChangeToThisScene(sceneDefinitionPresets.getNextPreset());
+
+        SaveOrUpdatableActionOccured();
+
     }
+
     private void ChangeToThisScene(SceneDefinition nextScene)
     {        
         // var skyBoxMaterial = mainCamera.GetComponentInChildren<Skybox>().material;
@@ -301,12 +377,12 @@ public class StartUpInitialization : MonoBehaviour
             if (!string.IsNullOrEmpty(dynaview))
             {
                 fieldOfViewSlider.value = float.Parse(dynaview, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-                mainCamera.fieldOfView = fieldOfViewSlider.value;
+                //mainCamera.fieldOfView = fieldOfViewSlider.value;
             }
             if (!string.IsNullOrEmpty(dynaspeed))
             {
                 speedSlider.value = float.Parse(dynaspeed, System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-                Time.timeScale = speedSlider.value;
+                //Time.timeScale = speedSlider.value;
             }
 
             if (string.IsNullOrEmpty(dynastring))

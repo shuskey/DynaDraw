@@ -12,18 +12,27 @@ BUG FIX / IMPROVE
 [X] Turn Cursor Cones off when 'show controls' are OFF
 
 	======
-[ ] Code cleanup
+
     ======
+Dev OPs:
+[X] Deploy script to automated new code release deploys
+[ ] Cross link Itch.io to Photoloom ??
+[ ] Return to compressed deploy files with Unity fixes it
+[ ] versioning of static web content to assit with cache refresh
+[ ] Git tagging or some other 'previous version' reference/storage
+[ ] Code cleanup
+[ ] Unit Tests
+[ ] Deployment pipeline script: Build, Test, Promote, Deploy Release Candidate, then Release Candidate promote to release
 	
 New Features:
--->[ ] Need local save of my masterpieces to include Scene Settings
--->[ ] Need instructions on Photoloom/dynadraw page
+[ ] Implement on screen keyboard(s)
+    - start with a simple Backspace, left arrow, right arrow, Delete, Letter 
+	- Multi panels: Quotables, Rotation and Motion, Objects, '... modifiers' (()[]zZ0-9C)
+
 -->[ ] Auto insert second (paired) quotes when someone starts typing a string this way the text shows up right away
 -->[ ] Slow down I speed, as in [IW] world spins too fast
 -->[ ] Need stronger "K" light emitions to light up more stuff
--->[ ] Speed Slider needs beter ability to choose slow motion - right now its hard to get a slowed setting
-[ ] Cross link Itch.io to Photoloom ??
-[ ] Implement iPad on screen keyboard
+
 [ ] Other types of joints
 	- Rag Doll dangle
 [ ] Lighting options - Dark, spot light, or other lighting/fog settings
@@ -50,6 +59,9 @@ New Features:
 	 - Other
 [ ]	Prefabs that make noise (sound) - try it
 [ ] Allow a second camera to be droped into the mix - Go for a Ride!
+[X] Need instructions on Photoloom/dynadraw page (quick HTML) - did pdf
+[X] Need local save of my masterpieces to include Scene Settings: currentSceneName, , fieldOfView, timeScale
+[X] Speed Slider needs beter ability to choose slow motion - right now its hard to get a slowed setting
 [X] Cooler, more interesting horizon/environment
 [X] Titlers and shooters should have a specific "look"
 [X] Add instructional graphics for keyboard and gamepad shooter/tilter usage

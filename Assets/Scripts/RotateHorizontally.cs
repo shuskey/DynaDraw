@@ -31,7 +31,7 @@ public class RotateHorizontally : MonoBehaviour
         useDynamicColor = useDynamic;
     }
 
-    public void SetDiection(int setXDirection, int setYDirection, int setZDirection)
+    public void SetDirection(int setXDirection, int setYDirection, int setZDirection)
     {
         xDirection = setXDirection;
         yDirection = setYDirection;

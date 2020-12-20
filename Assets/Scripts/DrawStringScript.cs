@@ -258,9 +258,9 @@ public class DrawStringScript : MonoBehaviour
                     rotateScript = go.GetComponentInChildren<RotateHorizontally>();
                     rotateScript.SetColor(currentColor, useDynamic: usingDynamicColor);
                     if (char.ToLower(dynaDrawCommand) == 'r')
-                        rotateScript.SetDiection(0, 0, -1);
+                        rotateScript.SetDirection(0, 0, -1);
                     else
-                        rotateScript.SetDiection(0, 0, 1);
+                        rotateScript.SetDirection(0, 0, 1);
                     if (char.IsLower(dynaDrawCommand))
                         rotateScript.SetStatic(true);
                     else
@@ -276,9 +276,9 @@ public class DrawStringScript : MonoBehaviour
                     rotateScript = go.GetComponentInChildren<RotateHorizontally>();
                     rotateScript.SetColor(currentColor, useDynamic: usingDynamicColor);
                     if (char.ToLower(dynaDrawCommand) == 'u')
-                        rotateScript.SetDiection(1, 0, 0);
+                        rotateScript.SetDirection(1, 0, 0);
                     else
-                        rotateScript.SetDiection(-1, 0, 0);
+                        rotateScript.SetDirection(-1, 0, 0);
                     if (char.IsLower(dynaDrawCommand))
                         rotateScript.SetStatic(true);
                     else
@@ -294,9 +294,9 @@ public class DrawStringScript : MonoBehaviour
                     rotateScript = go.GetComponentInChildren<RotateHorizontally>();
                     rotateScript.SetColor(currentColor, useDynamic: usingDynamicColor);
                     if (char.ToLower(dynaDrawCommand) == 'i')
-                        rotateScript.SetDiection(0, -1, 0);
+                        rotateScript.SetDirection(0, -1, 0);
                     else
-                        rotateScript.SetDiection(0, 1, 0);
+                        rotateScript.SetDirection(0, 1, 0);
                     if (char.IsLower(dynaDrawCommand))
                         rotateScript.SetStatic(true);
                     else
