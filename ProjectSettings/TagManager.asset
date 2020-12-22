@@ -9,6 +9,7 @@ TagManager:
   - Shoot
   - Tilt
   - ShootTilt
+  - Keyboard
   layers:
   - Default
   - TransparentFX

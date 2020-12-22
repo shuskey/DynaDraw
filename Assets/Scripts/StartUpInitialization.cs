@@ -16,6 +16,8 @@ public class StartUpInitialization : MonoBehaviour
     public Dropdown dropdown;
     public InputField inputFieldTitle;
     public InputField inputFieldCommands;
+    public GameObject KeyboardGameObject;
+    public Button keyboardKeyPrefab;
     public Button clearButton;
     public Button saveButton;
     public Button changeSceneButton;
@@ -25,6 +27,7 @@ public class StartUpInitialization : MonoBehaviour
     public Button shareButton;
     public Slider speedSlider;
     public Slider fieldOfViewSlider;
+    public Toggle showKeyboardToggle;
     public Toggle showControlsToggle;
     public bool animationPaused = false;
     public GameObject drawStringObject;
@@ -74,6 +77,7 @@ public class StartUpInitialization : MonoBehaviour
         speedSlider.onValueChanged.AddListener(delegate { SpeedSliderChanged(speedSlider.value); });
         fieldOfViewSlider.onValueChanged.AddListener(delegate { FieldOfViewSliderChanged(fieldOfViewSlider.value); });
         showControlsToggle.onValueChanged.AddListener(delegate { ShowControlsToggleChanged(showControlsToggle.isOn); });
+        showKeyboardToggle.onValueChanged.AddListener(delegate { ShowKeyboardToggleChanged(showKeyboardToggle.isOn); });
 
         initialFieldOfView = mainCamera.fieldOfView;
         initialSpeed = Time.timeScale;
@@ -320,13 +324,18 @@ public class StartUpInitialization : MonoBehaviour
         skyBoxMaterialChanged = true;
     }
 
+    void ShowKeyboardToggleChanged(bool toggleIsOn)
+    {
+        KeyboardGameObject.SetActive(toggleIsOn);
+    }
+
     void ShowControlsToggleChanged(bool toggleIsOn)
     {
         var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
         for (int i = 0; i < canvasObject.transform.childCount - 1; i++ )
         {
             var go = canvasObject.transform.GetChild(i).gameObject;
-            if (go.transform.tag == "No Hide")
+            if (go.transform.tag == "No Hide" || go.transform.tag == "Keyboard")
                 continue;
             go.SetActive(toggleIsOn);            
         }
@@ -338,7 +347,9 @@ public class StartUpInitialization : MonoBehaviour
         {
             savedCursorPosition = drawStringScript.GetCursorPosition();
             drawStringScript.Redraw(-1);  // turn off cursor caret thing
-        }      
+        }
+        if (!toggleIsOn)
+            showKeyboardToggle.isOn = false;
 
     }
 
@@ -350,6 +361,8 @@ public class StartUpInitialization : MonoBehaviour
         dynaDrawSavedCreations.GetFromJson();
 
         PopulateDropDown();
+        
+        PopulateOnScreenKeyboard();
 
         var firstScene = sceneDefinitionPresets.getFirstPreset();
 
@@ -410,6 +423,73 @@ public class StartUpInitialization : MonoBehaviour
         dropdown.AddOptions(dynaDrawOriginalCreations.JustTitles());
         dropdown.AddOptions(new List<string>(){ "----Your Creations Below----"});
         dropdown.AddOptions(dynaDrawSavedCreations.JustTitles());
+    }
+
+    static System.Tuple<byte, string> convertToKeyDefinitionPair(char keyValue)
+    {
+        System.Tuple<byte, string> returnThis = new System.Tuple<byte, string>((byte)keyValue, keyValue.ToString());
+        return returnThis;
+    }
+    static System.Tuple<byte, string>[] convertStringToKeyDefinition(string sixChars)
+    {
+        var returnThis = new System.Tuple<byte, string>[6];
+        for (var i = 0; i < 6; i++)
+        {
+            if (sixChars.Substring(i, 1) == " ")  // Special Case skip this button
+                returnThis[i] = new System.Tuple<byte, string>(0x00, "");
+            else
+                returnThis[i] = convertToKeyDefinitionPair(sixChars.Substring(i, 1).ToCharArray()[0]);
+        }
+        return returnThis;
+    }
+
+    private System.Tuple<byte, string>[][] allKeyDefinitionLines = new System.Tuple<byte, string>[9][];
+
+    void PopulateOnScreenKeyboard()
+    {
+        allKeyDefinitionLines[0] = new System.Tuple<byte, string>[] { new System.Tuple<byte, string>( 0x1b, "<"), new System.Tuple<byte, string>( 0x1a, ">"), new System.Tuple<byte, string>( 0x20, "Sp"), new System.Tuple<byte, string>( 0x7f, "Del"), new System.Tuple<byte, string>( 0x08, "Bksp"), new System.Tuple<byte, string>( 0x00, "")  };
+        allKeyDefinitionLines[1] = convertStringToKeyDefinition("01234 ");
+        allKeyDefinitionLines[2] = convertStringToKeyDefinition("56789C");
+        allKeyDefinitionLines[3] = convertStringToKeyDefinition("IUOiuo");
+        allKeyDefinitionLines[4] = convertStringToKeyDefinition("L Rl r");
+        allKeyDefinitionLines[5] = convertStringToKeyDefinition(" DZzd ");
+        allKeyDefinitionLines[6] = convertStringToKeyDefinition("FMBfmb");
+        allKeyDefinitionLines[7] = convertStringToKeyDefinition("SWAJKP");
+        allKeyDefinitionLines[8] = convertStringToKeyDefinition("()c[]\"");
+        
+        var offset = new Vector3(0, 0, 0);
+        int line = 0;
+        foreach (var lineOfKeys in allKeyDefinitionLines)
+        {
+            for (var row = 0; row < lineOfKeys.Length; row++)
+            {
+                if (lineOfKeys[row].Item1 != 0x00)
+                {
+                    var keyButtonGameObject = Instantiate(keyboardKeyPrefab, KeyboardGameObject.transform.position + offset, KeyboardGameObject.transform.rotation);
+                    var textElement = keyButtonGameObject.GetComponentInChildren<Text>();
+                    textElement.fontSize = 12;
+                    textElement.text = lineOfKeys[row].Item2;
+
+                    keyButtonGameObject.transform.SetParent(KeyboardGameObject.transform);
+
+                    var passThisToDelegateLine = line;
+                    var passThisToDelegateRow = row;
+                    keyButtonGameObject.onClick.AddListener(delegate { KeyBoardButtonClicked(passThisToDelegateLine, passThisToDelegateRow); });
+                }
+
+                offset.x += 30.0f;
+            }
+            offset.x = 0.0f;
+            offset.y -= 30.0f;
+            line++;
+        }
+    }
+
+    void KeyBoardButtonClicked(int line, int row)
+    {
+        Debug.Log("On Screen Key Pressed for " + allKeyDefinitionLines[line][row].Item2);
+        
+        inputFieldCommands.SetTextWithoutNotify(drawStringObject.GetComponentInChildren<DrawStringScript>().SendKey(allKeyDefinitionLines[line][row].Item1));
     }
 
     // Update is called once per frame

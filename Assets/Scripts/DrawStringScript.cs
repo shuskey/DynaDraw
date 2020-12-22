@@ -30,6 +30,7 @@ public class DrawStringScript : MonoBehaviour
     private Tilter tilterScript;
     private Color[] colors = { Color.black, Color.white, Color.red, Color.green, Color.blue, Color.yellow, Color.magenta, Color.cyan, Color.gray, Color.clear };
     private int cursorPosition = 0;
+    private bool hideCursorPosition = true;
     struct copySubString 
     { 
         public int startIndex; 
@@ -68,7 +69,7 @@ public class DrawStringScript : MonoBehaviour
     public void SetDynaString(string newCommands)
     {
         dynaDrawCommands = newCommands;
-        Redraw(-1);
+        Redraw(-1);  // will hide 3D Cursor
     }
 
     public string GetDynaString()
@@ -76,9 +77,58 @@ public class DrawStringScript : MonoBehaviour
         return dynaDrawCommands;
     }
 
+    public string SendKey(byte byteKeyValue)  // onscreen keyboard interfaces here
+    {
+        // private byte[] lineOneBytes = new byte[] { 0x1b, 0x1a, 0x20, 0x7f, 0x08 };  // left arrow, right arrow, space, Del, Backspace
+
+        switch (byteKeyValue)
+        {
+            case 0x1b: //Left Arrow
+                var newCursorPositon = cursorPosition - 1;
+                if (newCursorPositon < 0)
+                    newCursorPositon = 0;
+                Redraw(newCursorPositon);
+                break;
+            case 0x1a: //Right Arrow
+                newCursorPositon = cursorPosition + 1;
+                if (newCursorPositon > dynaDrawCommands.Length)
+                    newCursorPositon = dynaDrawCommands.Length;
+                Redraw(newCursorPositon);
+                break;
+            case 0x7f: //Delete
+                if (cursorPosition >= 0)
+                {
+                    newCursorPositon = cursorPosition;
+                    dynaDrawCommands = dynaDrawCommands.Remove(cursorPosition,1);
+                    Redraw(newCursorPositon);
+                }
+                break;
+            case 0x08: //Backspace
+                if (cursorPosition >= 1)
+                {
+                    newCursorPositon = cursorPosition - 1;
+                    dynaDrawCommands = dynaDrawCommands.Remove(cursorPosition - 1, 1);
+                    Redraw(newCursorPositon);
+                }
+                break;
+            default:
+                newCursorPositon = cursorPosition + 1;
+                dynaDrawCommands = dynaDrawCommands.Insert(cursorPosition, System.Text.Encoding.ASCII.GetString(new[] { byteKeyValue }));
+                Redraw(newCursorPositon);
+                break;
+        }
+        return dynaDrawCommands;
+    }
+
     public void Redraw(int caretPosition)
     {
-        cursorPosition = caretPosition;        
+        if (caretPosition == -1)
+            hideCursorPosition = true;
+        else
+        {
+            hideCursorPosition = false;
+            cursorPosition = caretPosition;
+        }
         GameObject.Destroy(parentObject);
         Start();
     }
@@ -99,7 +149,7 @@ public class DrawStringScript : MonoBehaviour
         copySubString lettersSubstring = new copySubString(-1, -1);
         bool insideQuotes = false;
 
-        if (cursorPosition == 0)
+        if (cursorPosition == 0 && !hideCursorPosition)
         {
             go = Instantiate(cursor_prefab, headObject.transform);
             go.transform.SetParent(headObject.transform);
@@ -307,7 +357,7 @@ public class DrawStringScript : MonoBehaviour
                     break;                
             }
 
-            if (index == (cursorPosition - 1))
+            if (index == (cursorPosition - 1) && !hideCursorPosition)
             {
                 go = Instantiate(cursor_prefab, headObject.transform);
                 go.transform.SetParent(headObject.transform);

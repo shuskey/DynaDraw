@@ -25,7 +25,8 @@ Dev OPs:
 [ ] Deployment pipeline script: Build, Test, Promote, Deploy Release Candidate, then Release Candidate promote to release
 	
 New Features:
-[ ] Implement on screen keyboard(s)
+[ ]  Add a version or date to the home screen or titles
+[X] Implement on screen keyboard(s)
     - start with a simple Backspace, left arrow, right arrow, Delete, Letter 
 	- Multi panels: Quotables, Rotation and Motion, Objects, '... modifiers' (()[]zZ0-9C)
 
