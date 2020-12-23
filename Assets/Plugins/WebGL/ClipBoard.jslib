@@ -29,7 +29,7 @@ mergeInto(LibraryManager.library, {
     GLctx.bindTexture(GLctx.TEXTURE_2D, GL.textures[texture]);
   },
         
-  CopyToClipboard: function (str) {
+  oldCopyToClipboard: function (str) {
 		var tempInput = document.createElement("input");
 		tempInput.value = Pointer_stringify(str);
 		document.body.appendChild(tempInput);
@@ -37,4 +37,31 @@ mergeInto(LibraryManager.library, {
 		document.execCommand("copy");
 		document.body.removeChild(tempInput);
 	  },
+
+    CopyToClipboard: function (str) {
+      var el = document.createElement("input");
+      el.value = Pointer_stringify(str);
+      document.body.appendChild(el);
+      el.select();
+
+      var oldContentEditable = el.contentEditable,
+        oldReadOnly = el.readOnly,
+        range = document.createRange();
+
+      el.contentEditable = true;
+      el.readOnly = false;
+      range.selectNodeContents(el);
+
+      var s = window.getSelection();
+      s.removeAllRanges();
+      s.addRange(range);
+
+      el.setSelectionRange(0, 999999); // A big number, to cover anything that could be inside the element.
+
+      el.contentEditable = oldContentEditable;
+      el.readOnly = oldReadOnly;
+
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    },
 });
