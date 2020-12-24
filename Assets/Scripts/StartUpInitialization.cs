@@ -80,6 +80,8 @@ public class StartUpInitialization : MonoBehaviour
 
         initialFieldOfView = mainCamera.fieldOfView;
         initialSpeed = Time.timeScale;
+
+        AllKeyboardsGameObject.SetActive(false);
     }
 
     void TextEditTitleValueChanged()
