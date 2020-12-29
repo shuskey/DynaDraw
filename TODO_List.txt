@@ -13,8 +13,6 @@ BUG FIX / IMPROVE
 [X] Webgl Sharable - Share icon - Create URL with Dyna String + accept Dyna String on URL
 [X] Turn Cursor Cones off when 'show controls' are OFF
 
-	======
-
     ======
 Dev OPs:
 [X] Deploy script to automated new code release deploys
