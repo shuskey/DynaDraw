@@ -61,10 +61,10 @@ public class OnScreenKeyboardScript : MonoBehaviour
                     keyButtonGameObject.onClick.AddListener(delegate { KeyBoardButtonClicked(passThisToDelegateKeyValue); });
                 }
 
-                offset.x += 30.0f;
+                offset.x += 25.0f;
             }
             offset.x = 0.0f;
-            offset.y -= 30.0f;
+            offset.y -= 25.0f;
             line++;
         }
     }

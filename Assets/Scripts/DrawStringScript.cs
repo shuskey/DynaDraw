@@ -219,13 +219,15 @@ public class DrawStringScript : MonoBehaviour
                 case 'Z':   //Zoom in
                     go = new GameObject("ZoomIn");                    
                     go.transform.SetParent(headObject.transform);
+                    go.transform.rotation = headObject.transform.rotation;
                     go.transform.localPosition = new Vector3(0, 0, 0);
                     go.transform.localScale = new Vector3(1f + zoomFactor, 1f + zoomFactor, 1f + zoomFactor);
                     headObject = go;
                     break;
                 case 'z':   //Zoom in
-                    go = new GameObject("ZoomOut");                    
+                    go = new GameObject("ZoomOut");
                     go.transform.SetParent(headObject.transform);
+                    go.transform.rotation = headObject.transform.rotation;
                     go.transform.localPosition = new Vector3(0, 0, 0);
                     go.transform.localScale = new Vector3(1f - zoomFactor, 1f - zoomFactor, 1f - zoomFactor);
                     headObject = go;

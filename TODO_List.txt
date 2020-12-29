@@ -2,6 +2,8 @@ BUG FIX / IMPROVE
 [ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue
 [ ] Shooter will shoot backwards at certain angles
 
+[X] A Z within ( ) is doing something strange
+[X] Program letters ( ) c [ ] missing from list of Keyboards
 [X] Host this myself on AWS at photoloom.com/dynadraw - now runs on iOS devices
 [X] Local save goes away every time I republish to itch.io - would a static URL help?
 [X]    Perhaps look at hosting this myself
@@ -46,7 +48,7 @@ New Features:
 	 - Transparent
 	 - IDX Logo
 	 - Lights
-[ ]	 Press/hold starts action (spin/spray/lights/lengthen) release stops
+[ ]	Press/hold starts action (spin/spray/lights/lengthen) release stops
 [ ] Other Particle Physics effects
 	 - Smoke
 	 - Sparkle
