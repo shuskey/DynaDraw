@@ -50,6 +50,8 @@ public class StartUpInitialization : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void OpenNewTab(string url);
 
+    enum TagsICareAbout { NoHide, InverseHide, Keyboard }
+
     private void Awake()
     {
         sceneDefinitionPresets = new SceneDefinitionPresets();
@@ -339,8 +341,15 @@ public class StartUpInitialization : MonoBehaviour
         for (int i = 0; i < canvasObject.transform.childCount - 1; i++ )
         {
             var go = canvasObject.transform.GetChild(i).gameObject;
-            if (go.transform.tag == "No Hide" || go.transform.tag == "Keyboard")
+            if (go.transform.tag == TagsICareAbout.NoHide.ToString() || go.transform.tag == TagsICareAbout.Keyboard.ToString())
+            {
                 continue;
+            }
+                
+            if (go.transform.tag == TagsICareAbout.InverseHide.ToString())            {
+                go.SetActive(!toggleIsOn);
+                continue;
+            }
             go.SetActive(toggleIsOn);            
         }
        if (toggleIsOn)

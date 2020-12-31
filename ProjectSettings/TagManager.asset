@@ -4,12 +4,15 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - No Hide
   - Enemy
   - Shoot
   - Tilt
   - ShootTilt
   - Keyboard
+  - MobileJoystick
+  - MobileButton
+  - NoHide
+  - InverseHide
   layers:
   - Default
   - TransparentFX
