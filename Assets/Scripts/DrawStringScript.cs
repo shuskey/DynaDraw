@@ -7,10 +7,12 @@ public class DrawStringScript : MonoBehaviour
     [SerializeField] [Tooltip("These characters define whats drawn")] private string dynaDrawCommands = "frfrf";
     public GameObject hinge_prefab;
     public GameObject arm_prefab;
+    public GameObject disk_prefab;
     public GameObject cursor_prefab;
     public GameObject trail_prefab;
     public GameObject rocket_prefab;
     public GameObject pointlight_prefab;
+    public GameObject spotlight_prefab;
     public GameObject world_prefab;
     public GameObject astiroid_prefab;
     public GameObject sword_prefab;
@@ -25,6 +27,7 @@ public class DrawStringScript : MonoBehaviour
     private Stack<GameObject>headObjectStack = new Stack<GameObject>();
     private GameObject go;
     private ArmLength armLengthScript;
+    private LightColor lightColotScript;
     private RotateHorizontally rotateScript;
     private PixelColor pixelColorScript;
     private Tilter tilterScript;
@@ -236,6 +239,12 @@ public class DrawStringScript : MonoBehaviour
                     go = Instantiate(sword_prefab, headObject.transform);
                     go.transform.SetParent(headObject.transform);
                     break;
+                case 'Q':   // Quarter - Disk
+                    go = Instantiate(disk_prefab, headObject.transform);
+                    go.transform.SetParent(headObject.transform);
+                    armLengthScript = go.GetComponentInChildren<ArmLength>();
+                    armLengthScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+                    break;
                 case 'W':   // World
                     go = Instantiate(world_prefab, headObject.transform);
                     go.transform.SetParent(headObject.transform);
@@ -251,6 +260,14 @@ public class DrawStringScript : MonoBehaviour
                 case 'K':   // 5KW point light
                     go = Instantiate(pointlight_prefab, headObject.transform);
                     go.transform.SetParent(headObject.transform);
+                    lightColotScript = go.GetComponentInChildren<LightColor>();
+                    lightColotScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+                    break;
+                case 'k':   // 5kW spot light
+                    go = Instantiate(spotlight_prefab, headObject.transform);
+                    go.transform.SetParent(headObject.transform);
+                    lightColotScript = go.GetComponentInChildren<LightColor>();
+                    lightColotScript.SetColor(currentColor, useDynamic: usingDynamicColor);
                     break;
                 case 'P':   // Dropping a Pixel - or a trail in this case
                     go = Instantiate(trail_prefab, headObject.transform);

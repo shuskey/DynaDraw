@@ -25,18 +25,24 @@ Dev OPs:
 [ ] Deployment pipeline script: Build, Test, Promote, Deploy Release Candidate, then Release Candidate promote to release
 	
 New Features:
-[ ]  Add a version or date to the home screen or titles
-[X] Implement on screen keyboard(s)
-    - start with a simple Backspace, left arrow, right arrow, Delete, Letter 
-	- Multi panels: Quotables, Rotation and Motion, Objects, '... modifiers' (()[]zZ0-9C)
-
--->[ ] Auto insert second (paired) quotes when someone starts typing a string this way the text shows up right away
--->[ ] Slow down I speed, as in [IW] world spins too fast
--->[ ] Need stronger "K" light emitions to light up more stuff
-
 [ ] Other types of joints
 	- Rag Doll dangle
-[ ] Lighting options - Dark, spot light, or other lighting/fog settings
+[ ]  Add a version or date to the home screen or titles
+[X]  Add a disk 3D object - Like BYU TV logo/graphics  Using "Q"
+[X] Implement on screen keyboard(s)
+    - start with a simple Backspace, left arrow, right arrow, Delete, Letter 	
+[ ] Need? KBs that work on Mobile Phones
+	- Multi panels only a few visible at once:
+		Quotables, Rotation and Motion, Objects, '... modifiers' (()[]zZ0-9C)
+
+-->[-] Auto insert second (paired) quotes when someone starts typing a string this way the text shows up right away
+    I Tried and failed - Unity InputField limitations
+-->[ ] Slow down I speed, as in [IW] world spins too fast
+-->[X] Need stronger "K" light emitions to light up more stuff
+
+[ ] Lighting options - Dark, spot light, or other lighting
+[X] Added a spot light "k"
+[ ] Add fog settings
 [ ] Add other cool 3D Objects: - make discoverable - so easy to add
          Parameters: Assigned Letter "W", auto pilot rotate to direction true/false
 		 color settable, shooter offset/direction
