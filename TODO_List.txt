@@ -1,6 +1,7 @@
 BUG FIX / IMPROVE
 [ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue
 [ ] Shooter will shoot backwards at certain angles
+[ ] On screen keyboad fails to scroll when end of edit box hit
 
 [X] A Z within ( ) is doing something strange
 [X] Program letters ( ) c [ ] missing from list of Keyboards
@@ -32,20 +33,23 @@ New Features:
 [X] Implement on screen keyboard(s)
     - start with a simple Backspace, left arrow, right arrow, Delete, Letter 	
 [ ] Need? KBs that work on Mobile Phones
+    - Not left-right scrollable
 	- Multi panels only a few visible at once:
 		Quotables, Rotation and Motion, Objects, '... modifiers' (()[]zZ0-9C)
 
 -->[-] Auto insert second (paired) quotes when someone starts typing a string this way the text shows up right away
     I Tried and failed - Unity InputField limitations
--->[ ] Slow down I speed, as in [IW] world spins too fast
+-->[X] Slow down I speed, as in [IW] world spins too fast - It has its own spin now, no I needed
 -->[X] Need stronger "K" light emitions to light up more stuff
 
-[ ] Lighting options - Dark, spot light, or other lighting
+[ ] Lighting options - Dark, or other lighting
 [X] Added a spot light "k"
 [ ] Add fog settings
-[ ] Add other cool 3D Objects: - make discoverable - so easy to add
+[/] Add other cool 3D Objects: - make discoverable - so easy to add
          Parameters: Assigned Letter "W", auto pilot rotate to direction true/false
 		 color settable, shooter offset/direction
+		 Using <> to let user enter the name
+[ ] Add Instructional scene that shows all UserSelectable objects and their names
 	 - Fruit
 	 - Flower
 	 - Coin like color disks

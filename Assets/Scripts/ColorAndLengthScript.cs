@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArmLength : MonoBehaviour
+public class ColorAndLengthScript : MonoBehaviour
 {
     [SerializeField] [Tooltip("Overall Speed when dynamic")] private float speed = 10;
     [SerializeField] [Tooltip("Dyanmic or Static")] private bool isStatic = true;
@@ -28,10 +28,8 @@ public class ArmLength : MonoBehaviour
     public void SetColor(Color color, bool useDynamic)
     {
         var children = GetComponentsInChildren<Renderer>();
-        var trailrenderer = GetComponentsInChildren<TrailRenderer>();
         children[0].material.color = color;
         useDynamicColor = useDynamic;
-        
     }
 
     public void SetVisibility(bool isVisible)

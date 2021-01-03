@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class DrawStringScript : MonoBehaviour
@@ -7,26 +9,22 @@ public class DrawStringScript : MonoBehaviour
     [SerializeField] [Tooltip("These characters define whats drawn")] private string dynaDrawCommands = "frfrf";
     public GameObject hinge_prefab;
     public GameObject arm_prefab;
-    public GameObject disk_prefab;
     public GameObject cursor_prefab;
     public GameObject trail_prefab;
-    public GameObject rocket_prefab;
     public GameObject pointlight_prefab;
     public GameObject spotlight_prefab;
-    public GameObject world_prefab;
-    public GameObject astiroid_prefab;
-    public GameObject sword_prefab;
     public GameObject tilter_prefab;
     public GameObject shooter_prefab;
     public GameObject letterOpener_prefab;
     public GameObject instructionalsObject;
+    public GameObject[] UserSelectable;
     public float zoomFactor = 0.2f;  //20%
 
     private GameObject parentObject;
     private GameObject headObject;
     private Stack<GameObject>headObjectStack = new Stack<GameObject>();
     private GameObject go;
-    private ArmLength armLengthScript;
+    private ColorAndLengthScript colorAndLengthScript;
     private LightColor lightColotScript;
     private RotateHorizontally rotateScript;
     private PixelColor pixelColorScript;
@@ -34,6 +32,7 @@ public class DrawStringScript : MonoBehaviour
     private Color[] colors = { Color.black, Color.white, Color.red, Color.green, Color.blue, Color.yellow, Color.magenta, Color.cyan, Color.gray, Color.clear };
     private int cursorPosition = 0;
     private bool hideCursorPosition = true;
+
     struct copySubString 
     { 
         public int startIndex; 
@@ -151,6 +150,7 @@ public class DrawStringScript : MonoBehaviour
         Stack<GameObject> headObjectStack = new Stack<GameObject>();
         copySubString lettersSubstring = new copySubString(-1, -1);
         bool insideQuotes = false;
+        copySubString userSelectedOperation = new copySubString(-1, -1);
 
         if (cursorPosition == 0 && !hideCursorPosition)
         {
@@ -161,14 +161,25 @@ public class DrawStringScript : MonoBehaviour
         //foreach (char dynaDrawCommand in dynaDrawString)
         for (int index = startIndex; index <= endIndex; index++)
         {
-            char dynaDrawCommand = dynaDrawString[index];            
+            char dynaDrawCommand = dynaDrawString[index];
 
             if (dynaDrawCommand == '>')
+            {
+                userSelectedOperation.endIndex = index;
+                var lengthOfString = userSelectedOperation.endIndex - userSelectedOperation.startIndex - 1;
+                if (lengthOfString > 0)
+                    DoUserCommand(dynaDrawString.Substring(userSelectedOperation.startIndex + 1, lengthOfString));
+                userSelectedOperation.startIndex = userSelectedOperation.endIndex = -1;
                 skippingStuffInsideAngleBrackets = false;
+            }
+
             if (skippingStuffInsideAngleBrackets)
                 continue;  // ignore everything inside < >
             if (dynaDrawCommand == '<')
+            {
+                userSelectedOperation.startIndex = userSelectedOperation.endIndex = index;
                 skippingStuffInsideAngleBrackets = true;
+            }
 
             if (dynaDrawCommand == '"')  // remember this group of Characters, so it can be Displayed as letter gameobjects
             {
@@ -235,28 +246,6 @@ public class DrawStringScript : MonoBehaviour
                     go.transform.localScale = new Vector3(1f - zoomFactor, 1f - zoomFactor, 1f - zoomFactor);
                     headObject = go;
                     break;
-                case 'S':   // Sword
-                    go = Instantiate(sword_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    break;
-                case 'Q':   // Quarter - Disk
-                    go = Instantiate(disk_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    armLengthScript = go.GetComponentInChildren<ArmLength>();
-                    armLengthScript.SetColor(currentColor, useDynamic: usingDynamicColor);
-                    break;
-                case 'W':   // World
-                    go = Instantiate(world_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    break;
-                case 'A':   // Astiroid
-                    go = Instantiate(astiroid_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    break;
-                case 'J':   // Jet Rocket
-                    go = Instantiate(rocket_prefab, headObject.transform);                    
-                    go.transform.SetParent(headObject.transform);
-                    break;
                 case 'K':   // 5KW point light
                     go = Instantiate(pointlight_prefab, headObject.transform);
                     go.transform.SetParent(headObject.transform);
@@ -308,13 +297,13 @@ public class DrawStringScript : MonoBehaviour
                 case 'x':   // was an XOR draw of the arm - will map to f
                 case 'X':   // was an XOR draw of the arm - will map to F
                     go = Instantiate(arm_prefab, headObject.transform);
-                    armLengthScript = go.GetComponentInChildren<ArmLength>();
-                    armLengthScript.SetColor(currentColor, useDynamic: usingDynamicColor);
-                    armLengthScript.SetStatic(char.IsLower(dynaDrawCommand));
+                    colorAndLengthScript = go.GetComponentInChildren<ColorAndLengthScript>();
+                    colorAndLengthScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+                    colorAndLengthScript.SetStatic(char.IsLower(dynaDrawCommand));
                     if (char.ToLower(dynaDrawCommand) == 'm' || char.ToLower(dynaDrawCommand) == 'b')
-                        armLengthScript.SetVisibility(false);
+                        colorAndLengthScript.SetVisibility(false);
                     if (char.ToLower(dynaDrawCommand) == 'b')
-                        armLengthScript.SetBackwards();
+                        colorAndLengthScript.SetBackwards();
                     go.transform.SetParent(headObject.transform);
                     headObject = go;
                     break;
@@ -384,6 +373,22 @@ public class DrawStringScript : MonoBehaviour
         }
         var instructionalScript = instructionalsObject.GetComponentInChildren<InputInstructionalScript>();
         instructionalScript.SetInstructionVisibility(showShoot: usingShooter, showTilt: usingTitler);
+    }
+
+    private void DoUserCommand(string userCommand)
+    {
+        if (Regex.IsMatch(userCommand, @"^[a-zA-Z]+$"))  //Should be a user selectable Prefab Object
+        {
+            var userSelectedPrefab = UserSelectable.Where(item => item.name == userCommand).FirstOrDefault();
+            if (userSelectedPrefab != null)
+            {
+                go = Instantiate(userSelectedPrefab, headObject.transform);
+                go.transform.SetParent(headObject.transform);
+                colorAndLengthScript = go.GetComponentInChildren<ColorAndLengthScript>();
+                if (colorAndLengthScript != null)
+                    colorAndLengthScript.SetColor(currentColor, useDynamic: usingDynamicColor);                               
+            }
+        }
     }
 
     private void DisplayTheseLetters(string lettersToDisplay)
