@@ -13,6 +13,7 @@ TagManager:
   - MobileButton
   - NoHide
   - InverseHide
+  - UserSelectable
   layers:
   - Default
   - TransparentFX

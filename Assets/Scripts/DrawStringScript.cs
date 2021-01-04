@@ -375,6 +375,11 @@ public class DrawStringScript : MonoBehaviour
         instructionalScript.SetInstructionVisibility(showShoot: usingShooter, showTilt: usingTitler);
     }
 
+    // UserSelectable object
+    // <Thing>: Find this Prefab
+    // <Color(1)> 0-9, or C
+    // <NewFunction(3)>
+    // <NewFunction(X)=mmmmm[Xr<Disk>]>
     private void DoUserCommand(string userCommand)
     {
         if (Regex.IsMatch(userCommand, @"^[a-zA-Z]+$"))  //Should be a user selectable Prefab Object
@@ -388,6 +393,29 @@ public class DrawStringScript : MonoBehaviour
                 if (colorAndLengthScript != null)
                     colorAndLengthScript.SetColor(currentColor, useDynamic: usingDynamicColor);                               
             }
+        }
+        else
+        {
+            var functionNameMatch = Regex.Match(userCommand, @"([A-Za-z][a-z0-9_]*)\((..*)\)");
+            if (functionNameMatch.Success)
+            {
+                if (functionNameMatch.Groups[1].ToString().ToLower() == "color" )
+                {
+                    if (System.Int32.TryParse(functionNameMatch.Groups[2].ToString(), out int color))
+                    {
+                        color = Mathf.Min(color, 9);
+                        color = Mathf.Max(color, 0);
+                        currentColor = colors[color];
+                        usingDynamicColor = false;
+                    } 
+                    else
+                    {
+                        if (functionNameMatch.Groups[2].ToString().ToLower() == "c")
+                            usingDynamicColor = true;
+                    }                    
+                }
+            }
+
         }
     }
 
