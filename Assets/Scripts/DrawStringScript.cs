@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -20,6 +21,7 @@ public class DrawStringScript : MonoBehaviour
     public GameObject[] UserSelectable;
     public float zoomFactor = 0.2f;  //20%
 
+    private int maxMultiplyCount = 25;
     private GameObject parentObject;
     private GameObject headObject;
     private Stack<GameObject>headObjectStack = new Stack<GameObject>();
@@ -33,6 +35,8 @@ public class DrawStringScript : MonoBehaviour
     private int cursorPosition = 0;
     private bool hideCursorPosition = true;
 
+    private IDictionary<string, string> userFuntions = new Dictionary<string, string>();
+
     struct copySubString 
     { 
         public int startIndex; 
@@ -44,6 +48,7 @@ public class DrawStringScript : MonoBehaviour
         }
     };
     private Stack<copySubString>copySubStringStack = new Stack<copySubString>();
+    private Stack<copySubString>userFunctionSubStringStack = new Stack<copySubString>();
 
     Color currentColor;
     bool usingShooter = false;
@@ -132,6 +137,7 @@ public class DrawStringScript : MonoBehaviour
             cursorPosition = caretPosition;
         }
         GameObject.Destroy(parentObject);
+        userFuntions.Clear();
         Start();
     }
 
@@ -151,6 +157,8 @@ public class DrawStringScript : MonoBehaviour
         copySubString lettersSubstring = new copySubString(-1, -1);
         bool insideQuotes = false;
         copySubString userSelectedOperation = new copySubString(-1, -1);
+        int repeatCounter = 0;
+        bool userSetRepeatCounterInPlay = false;
 
         if (cursorPosition == 0 && !hideCursorPosition)
         {
@@ -165,21 +173,35 @@ public class DrawStringScript : MonoBehaviour
 
             if (dynaDrawCommand == '>')
             {
+                string functionDefinition = null;
+                userSelectedOperation = userFunctionSubStringStack.Pop();
                 userSelectedOperation.endIndex = index;
+                
                 var lengthOfString = userSelectedOperation.endIndex - userSelectedOperation.startIndex - 1;
-                if (lengthOfString > 0)
-                    DoUserCommand(dynaDrawString.Substring(userSelectedOperation.startIndex + 1, lengthOfString));
-                userSelectedOperation.startIndex = userSelectedOperation.endIndex = -1;
-                skippingStuffInsideAngleBrackets = false;
+                if (lengthOfString > 0 &&  userFunctionSubStringStack.Count == 0)
+                {
+                    functionDefinition = DoUserCommand(dynaDrawString.Substring(userSelectedOperation.startIndex + 1, lengthOfString));
+                }
+                
+                //Only at top level
+                if (userFunctionSubStringStack.Count == 0)
+                {
+                    skippingStuffInsideAngleBrackets = false;
+                    userSelectedOperation.startIndex = userSelectedOperation.endIndex = -1;
+                    if (functionDefinition != null)
+                        ProcessDynaDrawCommand(functionDefinition, startIndex: 0, endIndex: functionDefinition.Length - 1);
+                }
+            }
+        
+            if (dynaDrawCommand == '<')
+            {
+                userSelectedOperation.startIndex = userSelectedOperation.endIndex = index;
+                userFunctionSubStringStack.Push(new copySubString(index, index));
+                skippingStuffInsideAngleBrackets = true;
             }
 
             if (skippingStuffInsideAngleBrackets)
                 continue;  // ignore everything inside < >
-            if (dynaDrawCommand == '<')
-            {
-                userSelectedOperation.startIndex = userSelectedOperation.endIndex = index;
-                skippingStuffInsideAngleBrackets = true;
-            }
 
             if (dynaDrawCommand == '"')  // remember this group of Characters, so it can be Displayed as letter gameobjects
             {
@@ -203,67 +225,124 @@ public class DrawStringScript : MonoBehaviour
 
             if (char.IsDigit(dynaDrawCommand))
             {
-                currentColor = colors[dynaDrawCommand - '0'];
-                usingDynamicColor = false;
+                if (userSetRepeatCounterInPlay)
+                    repeatCounter = repeatCounter * 10 + dynaDrawCommand - '0';
+                else
+                {
+                    repeatCounter = dynaDrawCommand - '0';
+                    userSetRepeatCounterInPlay = true;
+                }
             }
-            
-            switch (dynaDrawCommand)
+
+            int doThisManyTimes = 1;
+            if (userSetRepeatCounterInPlay)
+                doThisManyTimes = Math.Min(repeatCounter, maxMultiplyCount);            
+            while (doThisManyTimes > 0)
             {
-                case 's':   // shooter
-                    go = Instantiate(shooter_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    usingShooter = true;
-                    break;
-                case 't':   //Tilter
-                    go = Instantiate(tilter_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    tilterScript = go.GetComponentInChildren<Tilter>();
-                    tilterScript.direction = 1;
-                    headObject = go;
-                    usingTitler = true;
-                    break;
-                case 'T':   //Tilter opposite direction
-                    go = Instantiate(tilter_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    tilterScript = go.GetComponentInChildren<Tilter>();
-                    tilterScript.direction = -1;
-                    headObject = go;
-                    usingTitler = true;
-                    break;
-                case 'Z':   //Zoom in
-                    go = new GameObject("ZoomIn");                    
-                    go.transform.SetParent(headObject.transform);
-                    go.transform.rotation = headObject.transform.rotation;
-                    go.transform.localPosition = new Vector3(0, 0, 0);
-                    go.transform.localScale = new Vector3(1f + zoomFactor, 1f + zoomFactor, 1f + zoomFactor);
-                    headObject = go;
-                    break;
-                case 'z':   //Zoom in
-                    go = new GameObject("ZoomOut");
-                    go.transform.SetParent(headObject.transform);
-                    go.transform.rotation = headObject.transform.rotation;
-                    go.transform.localPosition = new Vector3(0, 0, 0);
-                    go.transform.localScale = new Vector3(1f - zoomFactor, 1f - zoomFactor, 1f - zoomFactor);
-                    headObject = go;
-                    break;
-                case 'K':   // 5KW point light
-                    go = Instantiate(pointlight_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    lightColotScript = go.GetComponentInChildren<LightColor>();
-                    lightColotScript.SetColor(currentColor, useDynamic: usingDynamicColor);
-                    break;
-                case 'k':   // 5kW spot light
-                    go = Instantiate(spotlight_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    lightColotScript = go.GetComponentInChildren<LightColor>();
-                    lightColotScript.SetColor(currentColor, useDynamic: usingDynamicColor);
-                    break;
-                case 'P':   // Dropping a Pixel - or a trail in this case
-                    go = Instantiate(trail_prefab, headObject.transform);
-                    pixelColorScript = go.GetComponentInChildren<PixelColor>();
-                    pixelColorScript.SetColor(currentColor, useDynamic: usingDynamicColor);
-                    go.transform.SetParent(headObject.transform);
-                    break;
+                switch (dynaDrawCommand)
+                {
+                    case 'Z':   //Zoom in
+                        go = new GameObject("ZoomIn");
+                        go.transform.SetParent(headObject.transform);
+                        go.transform.rotation = headObject.transform.rotation;
+                        go.transform.localPosition = new Vector3(0, 0, 0);
+                        go.transform.localScale = new Vector3(1f + zoomFactor, 1f + zoomFactor, 1f + zoomFactor);
+                        headObject = go;
+                        break;
+                    case 'z':   //Zoom in
+                        go = new GameObject("ZoomOut");
+                        go.transform.SetParent(headObject.transform);
+                        go.transform.rotation = headObject.transform.rotation;
+                        go.transform.localPosition = new Vector3(0, 0, 0);
+                        go.transform.localScale = new Vector3(1f - zoomFactor, 1f - zoomFactor, 1f - zoomFactor);
+                        headObject = go;
+                        break;
+                    case 'c':   // Copy the recorded commands   
+                        if (startIndex != endIndex)  // Someone may have typed a copy without any brackets, or there is nothing to draw
+                            ProcessDynaDrawCommand(dynaDrawString, startIndex: currentCopySubString.startIndex, endIndex: currentCopySubString.endIndex);
+                        break;
+                    case 'f':   // Forward static
+                    case 'F':   // Forward dynamic
+                    case 'b':   // backwards static - no drawing
+                    case 'B':   // backwards dynamic - no drawing
+                    case 'm':   // move static - dont draw arm
+                    case 'M':   // move dynamic - dont draw arm
+                    case 'x':   // was an XOR draw of the arm - will map to f
+                    case 'X':   // was an XOR draw of the arm - will map to F
+                        go = Instantiate(arm_prefab, headObject.transform);
+                        colorAndLengthScript = go.GetComponentInChildren<ColorAndLengthScript>();
+                        colorAndLengthScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+                        colorAndLengthScript.SetStatic(char.IsLower(dynaDrawCommand));
+                        if (char.ToLower(dynaDrawCommand) == 'm' || char.ToLower(dynaDrawCommand) == 'b')
+                            colorAndLengthScript.SetVisibility(false);
+                        if (char.ToLower(dynaDrawCommand) == 'b')
+                            colorAndLengthScript.SetBackwards();
+                        go.transform.SetParent(headObject.transform);
+                        headObject = go;
+                        break;
+                    case 'l':   // turn left   around the Z axis
+                    case 'L':   // continuous turn left
+                    case 'r':   // turn right
+                    case 'R':   // continuous turn right
+                        go = Instantiate(hinge_prefab, headObject.transform);
+                        go.transform.SetParent(headObject.transform);
+                        rotateScript = go.GetComponentInChildren<RotateHorizontally>();
+                        rotateScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+                        if (char.ToLower(dynaDrawCommand) == 'r')
+                            rotateScript.SetDirection(0, 0, -1);
+                        else
+                            rotateScript.SetDirection(0, 0, 1);
+                        if (char.IsLower(dynaDrawCommand))
+                            rotateScript.SetStatic(true);
+                        else
+                            rotateScript.SetStatic(false);
+                        headObject = go;
+                        break;
+                    case 'u':   // up  - around the X axis
+                    case 'U':
+                    case 'd':   // down
+                    case 'D':
+                        go = Instantiate(hinge_prefab, headObject.transform);
+                        go.transform.SetParent(headObject.transform);
+                        rotateScript = go.GetComponentInChildren<RotateHorizontally>();
+                        rotateScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+                        if (char.ToLower(dynaDrawCommand) == 'd')
+                            rotateScript.SetDirection(1, 0, 0);
+                        else
+                            rotateScript.SetDirection(-1, 0, 0);
+                        if (char.IsLower(dynaDrawCommand))
+                            rotateScript.SetStatic(true);
+                        else
+                            rotateScript.SetStatic(false);
+                        headObject = go;
+                        break;
+                    case 'i':   // in - around the Y axis
+                    case 'I':
+                    case 'o':   // out
+                    case 'O':
+                        go = Instantiate(hinge_prefab, headObject.transform);
+                        go.transform.SetParent(headObject.transform);
+                        rotateScript = go.GetComponentInChildren<RotateHorizontally>();
+                        rotateScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+                        if (char.ToLower(dynaDrawCommand) == 'i')
+                            rotateScript.SetDirection(0, -1, 0);
+                        else
+                            rotateScript.SetDirection(0, 1, 0);
+                        if (char.IsLower(dynaDrawCommand))
+                            rotateScript.SetStatic(true);
+                        else
+                            rotateScript.SetStatic(false);
+                        headObject = go;
+                        break;
+                    default:
+                        break;
+                }
+                doThisManyTimes--;
+            }
+
+            // non-repeatables
+            switch (dynaDrawCommand)
+            {                
                 case 'C':  // Taste the rainbow
                     usingDynamicColor = true;
                     break;
@@ -283,84 +362,7 @@ public class DrawStringScript : MonoBehaviour
                         currentCopySubString = copySubStringStack.Pop();
                         currentCopySubString.endIndex = index;
                     }
-                    break;               
-                case 'c':   // Copy the recorded commands   
-                    if (startIndex != endIndex)  // Someone may have typed a copy without any brackets, or there is nothing to draw
-                        ProcessDynaDrawCommand(dynaDrawString, startIndex: currentCopySubString.startIndex, endIndex: currentCopySubString.endIndex);
-                    break;
-                case 'f':   // Forward static
-                case 'F':   // Forward dynamic
-                case 'b':   // backwards static - no drawing
-                case 'B':   // backwards dynamic - no drawing
-                case 'm':   // move static - dont draw arm
-                case 'M':   // move dynamic - dont draw arm
-                case 'x':   // was an XOR draw of the arm - will map to f
-                case 'X':   // was an XOR draw of the arm - will map to F
-                    go = Instantiate(arm_prefab, headObject.transform);
-                    colorAndLengthScript = go.GetComponentInChildren<ColorAndLengthScript>();
-                    colorAndLengthScript.SetColor(currentColor, useDynamic: usingDynamicColor);
-                    colorAndLengthScript.SetStatic(char.IsLower(dynaDrawCommand));
-                    if (char.ToLower(dynaDrawCommand) == 'm' || char.ToLower(dynaDrawCommand) == 'b')
-                        colorAndLengthScript.SetVisibility(false);
-                    if (char.ToLower(dynaDrawCommand) == 'b')
-                        colorAndLengthScript.SetBackwards();
-                    go.transform.SetParent(headObject.transform);
-                    headObject = go;
-                    break;
-                case 'l':   // turn left   around the Z axis
-                case 'L':   // continuous turn left
-                case 'r':   // turn right
-                case 'R':   // continuous turn right
-                    go = Instantiate(hinge_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    rotateScript = go.GetComponentInChildren<RotateHorizontally>();
-                    rotateScript.SetColor(currentColor, useDynamic: usingDynamicColor);
-                    if (char.ToLower(dynaDrawCommand) == 'r')
-                        rotateScript.SetDirection(0, 0, -1);
-                    else
-                        rotateScript.SetDirection(0, 0, 1);
-                    if (char.IsLower(dynaDrawCommand))
-                        rotateScript.SetStatic(true);
-                    else
-                        rotateScript.SetStatic(false);
-                    headObject = go;
-                    break;
-                case 'u':   // up  - around the X axis
-                case 'U':
-                case 'd':   // down
-                case 'D':
-                    go = Instantiate(hinge_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    rotateScript = go.GetComponentInChildren<RotateHorizontally>();
-                    rotateScript.SetColor(currentColor, useDynamic: usingDynamicColor);
-                    if (char.ToLower(dynaDrawCommand) == 'u')
-                        rotateScript.SetDirection(1, 0, 0);
-                    else
-                        rotateScript.SetDirection(-1, 0, 0);
-                    if (char.IsLower(dynaDrawCommand))
-                        rotateScript.SetStatic(true);
-                    else
-                        rotateScript.SetStatic(false);
-                    headObject = go;
-                    break;
-                case 'i':   // in - around the Y axis
-                case 'I':
-                case 'o':   // out
-                case 'O':
-                    go = Instantiate(hinge_prefab, headObject.transform);
-                    go.transform.SetParent(headObject.transform);
-                    rotateScript = go.GetComponentInChildren<RotateHorizontally>();
-                    rotateScript.SetColor(currentColor, useDynamic: usingDynamicColor);
-                    if (char.ToLower(dynaDrawCommand) == 'i')
-                        rotateScript.SetDirection(0, -1, 0);
-                    else
-                        rotateScript.SetDirection(0, 1, 0);
-                    if (char.IsLower(dynaDrawCommand))
-                        rotateScript.SetStatic(true);
-                    else
-                        rotateScript.SetStatic(false);
-                    headObject = go;
-                    break;
+                    break;                          
                 default:
                     break;                
             }
@@ -370,7 +372,12 @@ public class DrawStringScript : MonoBehaviour
                 go = Instantiate(cursor_prefab, headObject.transform);
                 go.transform.SetParent(headObject.transform);
             }
+            if (!char.IsDigit(dynaDrawCommand))
+                userSetRepeatCounterInPlay = false;
+
         }
+        //copySubStringStack.Clear();
+        userFunctionSubStringStack.Clear();
         var instructionalScript = instructionalsObject.GetComponentInChildren<InputInstructionalScript>();
         instructionalScript.SetInstructionVisibility(showShoot: usingShooter, showTilt: usingTitler);
     }
@@ -380,10 +387,62 @@ public class DrawStringScript : MonoBehaviour
     // <Color(1)> 0-9, or C
     // <NewFunction(3)>
     // <NewFunction(X)=mmmmm[Xr<Disk>]>
-    private void DoUserCommand(string userCommand)
+    private string DoUserCommand(string userCommand)
     {
-        if (Regex.IsMatch(userCommand, @"^[a-zA-Z]+$"))  //Should be a user selectable Prefab Object
+        // <Thing> Should be a user selectable Prefab Object 
+        // OR parameterless function <Circle>
+        if (Regex.IsMatch(userCommand, @"^[a-zA-Z]+$"))
         {
+            if (userCommand.ToLower() == "tilter")
+            {
+                go = Instantiate(tilter_prefab, headObject.transform);
+                go.transform.SetParent(headObject.transform);
+                tilterScript = go.GetComponentInChildren<Tilter>();
+                tilterScript.direction = 1;
+                headObject = go;
+                usingTitler = true;
+                return null;
+            }
+            if (userCommand.ToLower() == "atilter")
+            {
+                go = Instantiate(tilter_prefab, headObject.transform);
+                go.transform.SetParent(headObject.transform);
+                tilterScript = go.GetComponentInChildren<Tilter>();
+                tilterScript.direction = -1;
+                headObject = go;
+                usingTitler = true;
+                return null;
+            }
+            if (userCommand.ToLower() == "shoot")
+            {
+                go = Instantiate(shooter_prefab, headObject.transform);
+                go.transform.SetParent(headObject.transform);
+                usingShooter = true;
+                return null;
+            }
+            if (userCommand.ToLower() == "point")
+            { go = Instantiate(pointlight_prefab, headObject.transform);
+                go.transform.SetParent(headObject.transform);
+                lightColotScript = go.GetComponentInChildren<LightColor>();
+                lightColotScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+                return null;
+            }
+            if (userCommand.ToLower() == "spot")
+            { 
+            go = Instantiate(spotlight_prefab, headObject.transform);
+            go.transform.SetParent(headObject.transform);
+            lightColotScript = go.GetComponentInChildren<LightColor>();
+            lightColotScript.SetColor(currentColor, useDynamic: usingDynamicColor);         
+            return null;
+            }
+            if (userCommand.ToLower() == "smoke" || userCommand.ToLower() == "draw")
+            {
+                go = Instantiate(trail_prefab, headObject.transform);
+                pixelColorScript = go.GetComponentInChildren<PixelColor>();
+                pixelColorScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+                go.transform.SetParent(headObject.transform);
+                return null;
+            }
             var userSelectedPrefab = UserSelectable.Where(item => item.name == userCommand).FirstOrDefault();
             if (userSelectedPrefab != null)
             {
@@ -391,32 +450,65 @@ public class DrawStringScript : MonoBehaviour
                 go.transform.SetParent(headObject.transform);
                 colorAndLengthScript = go.GetComponentInChildren<ColorAndLengthScript>();
                 if (colorAndLengthScript != null)
-                    colorAndLengthScript.SetColor(currentColor, useDynamic: usingDynamicColor);                               
+                    colorAndLengthScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+                return null;
             }
-        }
-        else
-        {
-            var functionNameMatch = Regex.Match(userCommand, @"([A-Za-z][a-z0-9_]*)\((..*)\)");
-            if (functionNameMatch.Success)
+            string functionDefinition;
+            if (userFuntions.TryGetValue(userCommand, out functionDefinition))
             {
-                if (functionNameMatch.Groups[1].ToString().ToLower() == "color" )
-                {
-                    if (System.Int32.TryParse(functionNameMatch.Groups[2].ToString(), out int color))
-                    {
-                        color = Mathf.Min(color, 9);
-                        color = Mathf.Max(color, 0);
-                        currentColor = colors[color];
-                        usingDynamicColor = false;
-                    } 
-                    else
-                    {
-                        if (functionNameMatch.Groups[2].ToString().ToLower() == "c")
-                            usingDynamicColor = true;
-                    }                    
-                }
+                // NO Parameters here, is that bad?
+                return functionDefinition;
             }
-
+            return null;
         }
+
+        // <Function(X)=asd>  Function Assign
+        var functionAssignMatch = Regex.Match(userCommand, @"([A-Za-z][a-z0-9_]*)\((.*)\)=(..*)");
+        if (functionAssignMatch.Success)  
+        {
+            userFuntions[functionAssignMatch.Groups[1].ToString()] = functionAssignMatch.Groups[3].ToString();
+            return null;
+        }
+
+        // <Function=asd>  Function Assign No Parameter parenthases
+        functionAssignMatch = Regex.Match(userCommand, @"([A-Za-z][a-z0-9_]*)=(..*)");
+        if (functionAssignMatch.Success)
+        {
+            userFuntions[functionAssignMatch.Groups[1].ToString()] = functionAssignMatch.Groups[2].ToString();
+            return null;
+        }
+
+        // <Function(1)>  Function Call
+        var functionCallMatch = Regex.Match(userCommand, @"([A-Za-z][a-z0-9_]*)\((.*)\)");
+        if (functionCallMatch.Success)  
+        {
+            var functionName = functionCallMatch.Groups[1].ToString();
+
+            if (functionName.ToLower() == "color")
+            {
+                if (System.Int32.TryParse(functionCallMatch.Groups[2].ToString(), out int color))
+                {
+                    color = Mathf.Min(color, 9);
+                    color = Mathf.Max(color, 0);
+                    currentColor = colors[color];
+                    usingDynamicColor = false;
+                }
+                else
+                {
+                    if (functionCallMatch.Groups[2].ToString().ToLower() == "c")
+                        usingDynamicColor = true;
+                }
+                return null;
+            }
+            // function(1)="Xf6r" - all occurances of X are replaced with 1
+            string functionDefinition;
+            if (userFuntions.TryGetValue(functionName, out functionDefinition))
+            {                
+                return functionDefinition.Replace("X", functionCallMatch.Groups[2].ToString());
+            }
+        }
+
+        return null;
     }
 
     private void DisplayTheseLetters(string lettersToDisplay)
