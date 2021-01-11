@@ -27,7 +27,9 @@ public class StartUpInitialization : MonoBehaviour
     public Slider speedSlider;
     public Slider fieldOfViewSlider;
     public Toggle showKeyboardToggle;
-    public Toggle showControlsToggle;
+    public Button showMenuButton;
+    public Button nextCreationButton;
+    public Button previousCreationButton;
     public bool animationPaused = false;
     public GameObject drawStringObject;
     public List<string> sceneTitles;
@@ -43,6 +45,7 @@ public class StartUpInitialization : MonoBehaviour
     private bool skyBoxMaterialChanged = false;
     private int currentDropdownSelectionIndex = 0;
     private int savedCursorPosition = 0;
+    private bool showMenuToggle = false;    
 
     [DllImport("__Internal")]
     private static extern void CopyToClipboard(string str);
@@ -75,15 +78,17 @@ public class StartUpInitialization : MonoBehaviour
         changeSceneButton.onClick.AddListener(delegate { ChangeSceneButtonClicked(); });
         shareButton.onClick.AddListener(delegate { ShareButtonClicked(); });
         helpButton.onClick.AddListener(delegate { HelpButtonClicked(); });
+        previousCreationButton.onClick.AddListener(delegate { DropDownValueChanged(currentDropdownSelectionIndex - 1); });
+        nextCreationButton.onClick.AddListener(delegate { DropDownValueChanged(currentDropdownSelectionIndex + 1); });        
         speedSlider.onValueChanged.AddListener(delegate { SpeedSliderChanged(speedSlider.value); });
         fieldOfViewSlider.onValueChanged.AddListener(delegate { FieldOfViewSliderChanged(fieldOfViewSlider.value); });
-        showControlsToggle.onValueChanged.AddListener(delegate { ShowControlsToggleChanged(showControlsToggle.isOn); });
+        showMenuButton.onClick.AddListener(delegate { showMenuClicked(); });
         showKeyboardToggle.onValueChanged.AddListener(delegate { ShowKeyboardToggleChanged(showKeyboardToggle.isOn); });
 
         initialFieldOfView = mainCamera.fieldOfView;
         initialSpeed = Time.timeScale;
 
-        AllKeyboardsGameObject.SetActive(false);
+        AllKeyboardsGameObject.SetActive(false);        
     }
 
     void TextEditTitleValueChanged()
@@ -108,18 +113,14 @@ public class StartUpInitialization : MonoBehaviour
 
     void DropDownValueChanged(int index)
     {
+        if (index < 0)
+            index = dropdown.options.Count - 1;
+        if (index > dropdown.options.Count)
+            index = 0;
         var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
         var originalCreationsListSize = dynaDrawOriginalCreations.OriginalCreationsList.Count;
         currentDropdownSelectionIndex = index;
-        if (index == 0)  // Selected the Title of the Dropdown
-        {
-            inputFieldTitle.text = "";
-            drawStringScript.SetDynaString(inputFieldCommands.text = "");            
 
-            saveButton.GetComponentInChildren<Text>().text = "Save";
-            saveButton.interactable = false;
-            return;
-        }
         if (index < originalCreationsListSize)  // Prefabs original creations - not editable, nor deletable
         {
             var selectedDynaDrawOriginalItem = dynaDrawOriginalCreations.OriginalCreationsList[index];
@@ -150,9 +151,9 @@ public class StartUpInitialization : MonoBehaviour
             saveButton.interactable = false;
             return;
         }
-        if (index > originalCreationsListSize)  // Here is the users own saved items
+        if (index >= originalCreationsListSize)  // Here is the users own saved items
         {
-            var selectedDynaDrawSavedItem = dynaDrawSavedCreations.UserSaveCreationsList[index - originalCreationsListSize - 1];
+            var selectedDynaDrawSavedItem = dynaDrawSavedCreations.UserSaveCreationsList[index - originalCreationsListSize];
             inputFieldTitle.text = selectedDynaDrawSavedItem.Title;
             drawStringScript.SetDynaString(inputFieldCommands.text = selectedDynaDrawSavedItem.DynaDrawCommands);
             
@@ -262,7 +263,7 @@ public class StartUpInitialization : MonoBehaviour
 #endif
      }
 
-        void ShareButtonClicked()
+    void ShareButtonClicked()
     {
         var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
         var dynaStringEncoded = System.Uri.EscapeUriString(drawStringScript.GetDynaString());
@@ -333,6 +334,12 @@ public class StartUpInitialization : MonoBehaviour
     void ShowKeyboardToggleChanged(bool toggleIsOn)
     {
         AllKeyboardsGameObject.SetActive(toggleIsOn);
+    }
+
+    void showMenuClicked()
+    {
+        showMenuToggle = !showMenuToggle;
+        ShowControlsToggleChanged(showMenuToggle);        
     }
 
     void ShowControlsToggleChanged(bool toggleIsOn)
@@ -422,17 +429,13 @@ public class StartUpInitialization : MonoBehaviour
             inputFieldCommands.text = dynaDrawOriginalCreations.OriginalCreationsList[0].DynaDrawCommands;
             drawStringScript.SetDynaString(inputFieldCommands.text);
         }
-
-        showControlsToggle.isOn = false;
-      //  ShowControlsToggleChanged(false);
-
+        ShowControlsToggleChanged(false);
         ChangeToThisScene(firstScene);
     }
 
     void PopulateDropDown()
     {
-        dropdown.AddOptions(dynaDrawOriginalCreations.JustTitles());
-        dropdown.AddOptions(new List<string>(){ "----Your Creations Below----"});
+        dropdown.AddOptions(dynaDrawOriginalCreations.JustTitles());        
         dropdown.AddOptions(dynaDrawSavedCreations.JustTitles());
     }
 
