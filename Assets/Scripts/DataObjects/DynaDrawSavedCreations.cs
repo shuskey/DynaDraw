@@ -17,9 +17,9 @@ namespace Assets.Scripts.DataObjects
         private readonly string saveFileName = "dynadrawsaves.json";
         private const string playerPreferenceKey = "DynaDrawCreations";
 
-        public void Add(string title, string commands, string sceneName, float fieldOfView, float timeScale)
+        public void Add(string title, string subtitle, string commands, string sceneName, float fieldOfView, float timeScale)
         {
-            UserSaveCreationsList.Add(new DynaDrawSavedItem(title, commands, sceneName, fieldOfView.ToString(), timeScale.ToString()));
+            UserSaveCreationsList.Add(new DynaDrawSavedItem(title, subtitle, commands, sceneName, fieldOfView.ToString(), timeScale.ToString()));
             SaveIntoJson();
         }
 
@@ -75,7 +75,7 @@ namespace Assets.Scripts.DataObjects
             {
                 Debug.Log($"Could not find or process file at {Application.persistentDataPath}/{saveFileName}, will start with notfound item.");
                 UserSaveComments = "Your own creation";
-                UserSaveCreationsList = new List<DynaDrawSavedItem>() { new DynaDrawSavedItem("Sample", "Rfrrrrrrfrrrrrrfrrrrrrf", "", "", "") };
+                UserSaveCreationsList = new List<DynaDrawSavedItem>() { new DynaDrawSavedItem("Sample", "", "Rf6rf6rf6rf", "", "", "") };
 }
         }
     }

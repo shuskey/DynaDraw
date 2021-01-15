@@ -13,6 +13,8 @@ public class StartUpInitialization : MonoBehaviour
     public float defaultFieldOfView = 60.0f;
     public Light directionalLight;
     public Canvas canvasObject;
+    public Text movingTitlePrefab;
+    public Text movingSubtitlePrefab;
     public Dropdown dropdown;
     public InputField inputFieldTitle;
     public InputField inputFieldCommands;
@@ -45,7 +47,16 @@ public class StartUpInitialization : MonoBehaviour
     private bool skyBoxMaterialChanged = false;
     private int currentDropdownSelectionIndex = 0;
     private int savedCursorPosition = 0;
-    private bool showMenuToggle = false;    
+    private bool showMenuToggle = false;
+    private Queue<int> sceneIndexTransitionQueue = new Queue<int>();
+    private Queue<int> sceneDirectionTransitionQueue = new Queue<int>();
+    private int transistionToThisSaveIndex;
+    private int transistionDirection;
+    private bool transitionInProgress = false;
+    private const int TRANSITION_STEP_COUNT = 300;
+    private int transitionCountDown = TRANSITION_STEP_COUNT;
+    private string transitionSubtitle;
+    private string transitionTitle;
 
     [DllImport("__Internal")]
     private static extern void CopyToClipboard(string str);
@@ -56,7 +67,7 @@ public class StartUpInitialization : MonoBehaviour
     enum TagsICareAbout { NoHide, InverseHide, Keyboard }
 
     private void Awake()
-    {
+    {        
         sceneDefinitionPresets = new SceneDefinitionPresets();
         int index = 0;
         foreach (var sceneTitle in sceneTitles)
@@ -71,15 +82,15 @@ public class StartUpInitialization : MonoBehaviour
         textEditCommands.onValueChanged.AddListener(delegate { TextEditCommandsValueChanged(); });
         saveButton.GetComponentInChildren<Text>().text = "Save";
         saveButton.interactable = false;
-        dropdown.onValueChanged.AddListener(delegate { DropDownValueChanged(dropdown.value); });
         clearButton.onClick.AddListener(delegate { ClearButtonClicked(); });
         saveButton.onClick.AddListener(delegate { SaveButtonClicked(); });
         pauseButton.onClick.AddListener(delegate { PauseButtonClicked(); });
         changeSceneButton.onClick.AddListener(delegate { ChangeSceneButtonClicked(); });
         shareButton.onClick.AddListener(delegate { ShareButtonClicked(); });
         helpButton.onClick.AddListener(delegate { HelpButtonClicked(); });
-        previousCreationButton.onClick.AddListener(delegate { DropDownValueChanged(currentDropdownSelectionIndex - 1); });
-        nextCreationButton.onClick.AddListener(delegate { DropDownValueChanged(currentDropdownSelectionIndex + 1); });        
+        dropdown.onValueChanged.AddListener(delegate { DropDownValueChanged(dropdown.value); });
+        previousCreationButton.onClick.AddListener(delegate { DropDownValueIncrement(-1); });
+        nextCreationButton.onClick.AddListener(delegate { DropDownValueIncrement(1); });        
         speedSlider.onValueChanged.AddListener(delegate { SpeedSliderChanged(speedSlider.value); });
         fieldOfViewSlider.onValueChanged.AddListener(delegate { FieldOfViewSliderChanged(fieldOfViewSlider.value); });
         showMenuButton.onClick.AddListener(delegate { showMenuClicked(); });
@@ -89,6 +100,16 @@ public class StartUpInitialization : MonoBehaviour
         initialSpeed = Time.timeScale;
 
         AllKeyboardsGameObject.SetActive(false);        
+    }
+
+    void StartMovingTitles(string title, string subtitle)
+    {
+        var movingTitle = Instantiate(movingTitlePrefab, canvasObject.transform);
+        //movingTitle.transform.SetParent(canvasObject.transform);
+        movingTitle.text = title; 
+        var movingSubtitle = Instantiate(movingSubtitlePrefab, canvasObject.transform);
+        //movingSubtitle.transform.SetParent(canvasObject.transform);
+        movingSubtitle.text = subtitle;
     }
 
     void TextEditTitleValueChanged()
@@ -113,10 +134,23 @@ public class StartUpInitialization : MonoBehaviour
 
     void DropDownValueChanged(int index)
     {
-        if (index < 0)
-            index = dropdown.options.Count - 1;
-        if (index > dropdown.options.Count)
-            index = 0;
+        currentDropdownSelectionIndex = index;
+        ChangeCreationInAScene(index);
+    }
+
+    void DropDownValueIncrement(int incrementOrDecrement)
+    {
+        currentDropdownSelectionIndex += incrementOrDecrement;
+
+        if (currentDropdownSelectionIndex < 0)
+            currentDropdownSelectionIndex = dropdown.options.Count - 1;
+        if (currentDropdownSelectionIndex >= dropdown.options.Count)
+            currentDropdownSelectionIndex = 0;
+        QueueUpACreationChangeToThisScene(currentDropdownSelectionIndex, incrementOrDecrement);
+    }
+
+    void ChangeCreationInAScene(int index)
+    { 
         var drawStringScript = drawStringObject.GetComponentInChildren<DrawStringScript>();
         var originalCreationsListSize = dynaDrawOriginalCreations.OriginalCreationsList.Count;
         currentDropdownSelectionIndex = index;
@@ -126,9 +160,9 @@ public class StartUpInitialization : MonoBehaviour
             var selectedDynaDrawOriginalItem = dynaDrawOriginalCreations.OriginalCreationsList[index];
             inputFieldTitle.text = selectedDynaDrawOriginalItem.Title;
             drawStringScript.SetDynaString(inputFieldCommands.text = selectedDynaDrawOriginalItem.DynaDrawCommands);
-            
+
             ChangeToThisScene(sceneDefinitionPresets.getSpecific(selectedDynaDrawOriginalItem.SceneName ?? sceneTitles[0]));
-            var dynaview =  selectedDynaDrawOriginalItem.FieldOfView;
+            var dynaview = selectedDynaDrawOriginalItem.FieldOfView;
             var dynaspeed = selectedDynaDrawOriginalItem.TimeScale;
 
             if (!string.IsNullOrEmpty(dynaview))
@@ -149,6 +183,8 @@ public class StartUpInitialization : MonoBehaviour
 
             saveButton.GetComponentInChildren<Text>().text = "Delete";
             saveButton.interactable = false;
+            transitionTitle = selectedDynaDrawOriginalItem.Title;
+            transitionSubtitle = selectedDynaDrawOriginalItem.Subtitle;
             return;
         }
         if (index >= originalCreationsListSize)  // Here is the users own saved items
@@ -156,7 +192,7 @@ public class StartUpInitialization : MonoBehaviour
             var selectedDynaDrawSavedItem = dynaDrawSavedCreations.UserSaveCreationsList[index - originalCreationsListSize];
             inputFieldTitle.text = selectedDynaDrawSavedItem.Title;
             drawStringScript.SetDynaString(inputFieldCommands.text = selectedDynaDrawSavedItem.DynaDrawCommands);
-            
+
             ChangeToThisScene(sceneDefinitionPresets.getSpecific(selectedDynaDrawSavedItem.SceneName ?? sceneTitles[0]));
 
             var dynaview = selectedDynaDrawSavedItem.FieldOfView;
@@ -180,6 +216,8 @@ public class StartUpInitialization : MonoBehaviour
 
             saveButton.GetComponentInChildren<Text>().text = "Delete";
             saveButton.interactable = true;
+            transitionTitle = selectedDynaDrawSavedItem.Title;
+            transitionSubtitle = selectedDynaDrawSavedItem.Subtitle;
             return;
         }
     }
@@ -225,7 +263,7 @@ public class StartUpInitialization : MonoBehaviour
             if (inputFieldTitle.text.Length != 0)
                 title = inputFieldTitle.text;
 
-            dynaDrawSavedCreations.Add(title, inputFieldCommands.text, sceneName: currentSceneName, fieldOfView: mainCamera.fieldOfView, timeScale: Time.timeScale);
+            dynaDrawSavedCreations.Add(title, subtitle: "Your own creation", inputFieldCommands.text, sceneName: currentSceneName, fieldOfView: mainCamera.fieldOfView, timeScale: Time.timeScale);
             dropdown.AddOptions(new List<string>() { title });
             
             dropdown.value = currentDropdownSelectionIndex = dropdown.options.Count - 1;
@@ -240,7 +278,7 @@ public class StartUpInitialization : MonoBehaviour
             if (inputFieldTitle.text.Length != 0)
                 title = inputFieldTitle.text;
 
-            dynaDrawSavedCreations.Update(currentDropdownSelectionIndex - dynaDrawOriginalCreations.OriginalCreationsList.Count - 1, title, inputFieldCommands.text, sceneName: currentSceneName, fieldOfView: mainCamera.fieldOfView.ToString(), timeScale: Time.timeScale.ToString());
+            dynaDrawSavedCreations.Update(currentDropdownSelectionIndex - dynaDrawOriginalCreations.OriginalCreationsList.Count, title, inputFieldCommands.text, sceneName: currentSceneName, fieldOfView: mainCamera.fieldOfView.ToString(), timeScale: Time.timeScale.ToString());
             saveButton.GetComponentInChildren<Text>().text = "Delete";
             saveButton.interactable = false;
             return;
@@ -248,7 +286,7 @@ public class StartUpInitialization : MonoBehaviour
         if (saveButton.GetComponentInChildren<Text>().text == "Delete")
         {
             dropdown.options.RemoveAt(currentDropdownSelectionIndex);
-            dynaDrawSavedCreations.Remove(currentDropdownSelectionIndex - dynaDrawOriginalCreations.OriginalCreationsList.Count - 1);
+            dynaDrawSavedCreations.Remove(currentDropdownSelectionIndex - dynaDrawOriginalCreations.OriginalCreationsList.Count);
             ClearButtonClicked();
             return;
         }
@@ -311,15 +349,31 @@ public class StartUpInitialization : MonoBehaviour
     }
 
     void ChangeSceneButtonClicked()
-    {        
+    {
         ChangeToThisScene(sceneDefinitionPresets.getNextPreset());
 
         SaveOrUpdatableActionOccured();
+    }
 
+    private void QueueUpACreationChangeToThisScene(int nextCreationIndex, int direction)
+    {
+        sceneIndexTransitionQueue.Enqueue(nextCreationIndex);
+        sceneDirectionTransitionQueue.Enqueue(direction);
+    }
+
+    private void CheckToSeeIfATransitonShouldBeStarted()
+    {
+        if (!transitionInProgress && sceneIndexTransitionQueue.Count != 0)
+        {
+            transistionToThisSaveIndex = sceneIndexTransitionQueue.Dequeue();
+            transistionDirection = sceneDirectionTransitionQueue.Dequeue();
+            transitionCountDown = TRANSITION_STEP_COUNT;
+            transitionInProgress = true;
+        }
     }
 
     private void ChangeToThisScene(SceneDefinition nextScene)
-    {        
+    {
         // var skyBoxMaterial = mainCamera.GetComponentInChildren<Skybox>().material;
         // skyBoxMaterial = nextScene.SkyBoxMaterial;
         RenderSettings.skybox = nextScene.SkyBoxMaterial;
@@ -329,6 +383,25 @@ public class StartUpInitialization : MonoBehaviour
         currentSceneName = nextScene.Title;
 
         skyBoxMaterialChanged = true;
+    }
+
+    private void DoNextStepOfSceneTransition()
+    {
+        var fractionComplete = (float)(TRANSITION_STEP_COUNT - transitionCountDown) / (float)TRANSITION_STEP_COUNT;
+        var smoothF = Mathf.SmoothStep(0f, 360f, fractionComplete);        
+        var rotVector = Quaternion.Euler(0, smoothF, 0);
+        mainCamera.transform.rotation = rotVector;
+
+        if (transitionCountDown == TRANSITION_STEP_COUNT / 2)
+        {
+            dropdown.value = currentDropdownSelectionIndex;  // this will end up calling DropDownValueChanged
+        }
+        if (transitionCountDown <= 0)
+        {
+            transitionInProgress = false;
+            StartMovingTitles(transitionTitle, transitionSubtitle);
+        }
+        transitionCountDown--;
     }
 
     void ShowKeyboardToggleChanged(bool toggleIsOn)
@@ -376,6 +449,8 @@ public class StartUpInitialization : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        var title = "3D Dyna-Draw, by Scott Huskey";
+        var subtitle = "Adapted from Michael R.Dunlavey, Performance Software Associates, Inc. (1989)";
         dynaDrawOriginalCreations = new DynaDrawOriginalCreations();
         dynaDrawSavedCreations = new DynaDrawSavedCreations();
         dynaDrawSavedCreations.GetFromJson();
@@ -420,7 +495,8 @@ public class StartUpInitialization : MonoBehaviour
                 dynastring = dynaDrawOriginalCreations.OriginalCreationsList[0].DynaDrawCommands;
             
             inputFieldCommands.text = dynastring;
-            inputFieldTitle.text = dynatitle;
+            title = inputFieldTitle.text = dynatitle;
+            subtitle = "Shared with you from a friend.";
             drawStringScript.SetDynaString(dynastring);
         }
         else
@@ -429,6 +505,8 @@ public class StartUpInitialization : MonoBehaviour
             inputFieldCommands.text = dynaDrawOriginalCreations.OriginalCreationsList[0].DynaDrawCommands;
             drawStringScript.SetDynaString(inputFieldCommands.text);
         }
+        StartMovingTitles(title, subtitle);
+
         ShowControlsToggleChanged(false);
         ChangeToThisScene(firstScene);
     }
@@ -442,6 +520,10 @@ public class StartUpInitialization : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        CheckToSeeIfATransitonShouldBeStarted();
+        if (transitionInProgress)
+            DoNextStepOfSceneTransition();
+
         if (skyBoxMaterialChanged)
         {
             DynamicGI.UpdateEnvironment();

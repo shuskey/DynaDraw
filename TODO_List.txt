@@ -1,8 +1,11 @@
 BUG FIX / IMPROVE
 [ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue
 [ ] Shooter will shoot backwards at certain angles
-[ ] On screen keyboad fails to scroll when end of edit box hit
+[ ] Would be nice if shooter cannon balls took on the current color
+[ ] More full 3d font: upper + lower + numbers + punctuation
+[-] On Screen KB is depricated. On screen keyboad fails to scroll when end of edit box hit
 
+[X] Cleaned up a Mobile 'View/Interact mode only'
 [X] A Z within ( ) is doing something strange
 [X] Program letters ( ) c [ ] missing from list of Keyboards
 [X] Host this myself on AWS at photoloom.com/dynadraw - now runs on iOS devices
@@ -15,13 +18,13 @@ BUG FIX / IMPROVE
 [X] Turn Cursor Cones off when 'show controls' are OFF
 
     ======
+[ ] Code cleanup
 Dev OPs:
 [X] Deploy script to automated new code release deploys
 [ ] Cross link Itch.io to Photoloom ??
 [ ] Return to compressed deploy files with Unity fixes it
 [ ] versioning of static web content to assit with cache refresh
 [ ] Git tagging or some other 'previous version' reference/storage
-[ ] Code cleanup
 [ ] Unit Tests
 [ ] Deployment pipeline script: Build, Test, Promote, Deploy Release Candidate, then Release Candidate promote to release
 	
@@ -32,7 +35,7 @@ New Features:
 [X]  Add a disk 3D object - Like BYU TV logo/graphics  Using "Q"
 [X] Implement on screen keyboard(s)
     - start with a simple Backspace, left arrow, right arrow, Delete, Letter 	
-[ ] Need? KBs that work on Mobile Phones
+[-] Depricated - Need? KBs that work on Mobile Phones
     - Not left-right scrollable
 	- Multi panels only a few visible at once:
 		Quotables, Rotation and Motion, Objects, '... modifiers' (()[]zZ0-9C)
@@ -52,10 +55,10 @@ New Features:
 [ ] Add Instructional scene that shows all UserSelectable objects and their names
 	 - Fruit
 	 - Flower
-	 - Coin like color disks
+	 X Coin like color disks
 	 - Transparent
 	 - IDX Logo
-	 - Lights
+	 X Lights
 [ ]	Press/hold starts action (spin/spray/lights/lengthen) release stops
 [ ] Other Particle Physics effects
 	 - Smoke
