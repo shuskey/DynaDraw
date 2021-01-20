@@ -3,8 +3,22 @@ BUG FIX / IMPROVE
 [ ] Shooter will shoot backwards at certain angles
 [ ] Would be nice if shooter cannon balls took on the current color
 [ ] More full 3d font: upper + lower + numbers + punctuation
-[-] On Screen KB is depricated. On screen keyboad fails to scroll when end of edit box hit
+[ ] Scene Transitions that kind and gentle - the current "360 Spin" is too much
 
+[ ] Public Gallery for sharing:
+   - dyanmo DB for storage
+   CreationID, Title, Tags, Author Comments, Submitted Date, Author Email
+   DynaText Scene, Aspect Ratio, Speed, Giff Animation
+   Active (soft delete), Published, Featured, Upvotes, Downvotes, Views, Comment Count, Report Count
+   Comments[] 
+[ ] Gallery Button at top
+[ ] Gallery major sections - mine - Featured, Recent, Popular, Admin screen
+[ ] Admin screen to approve Publish requests, mark as featured, review comments, review "Reported", soft Delete
+[ ] Need easy account creation/verify email - needed to publish, vote, comments
+
+[ ] Tilter in front of creations without Tilter 
+
+    6d12r<ATilter><ATilter>6u12l
 [X] Cleaned up a Mobile 'View/Interact mode only'
 [X] A Z within ( ) is doing something strange
 [X] Program letters ( ) c [ ] missing from list of Keyboards
@@ -35,6 +49,7 @@ New Features:
 [X]  Add a disk 3D object - Like BYU TV logo/graphics  Using "Q"
 [X] Implement on screen keyboard(s)
     - start with a simple Backspace, left arrow, right arrow, Delete, Letter 	
+[-] On Screen KB is depricated. On screen keyboad fails to scroll when end of edit box hit
 [-] Depricated - Need? KBs that work on Mobile Phones
     - Not left-right scrollable
 	- Multi panels only a few visible at once:

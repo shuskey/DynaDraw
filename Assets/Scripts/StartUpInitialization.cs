@@ -37,6 +37,7 @@ public class StartUpInitialization : MonoBehaviour
     public List<string> sceneTitles;
     public List<Material> skyBoxMaterial;
     public List<float> sceneIntensity;
+    public Animator transitionAnim;
     private float initialFieldOfView;
     private float initialSpeed;
     private string baseUrl;
@@ -48,15 +49,9 @@ public class StartUpInitialization : MonoBehaviour
     private int currentDropdownSelectionIndex = 0;
     private int savedCursorPosition = 0;
     private bool showMenuToggle = false;
-    private Queue<int> sceneIndexTransitionQueue = new Queue<int>();
-    private Queue<int> sceneDirectionTransitionQueue = new Queue<int>();
-    private int transistionToThisSaveIndex;
-    private int transistionDirection;
-    private bool transitionInProgress = false;
-    private const int TRANSITION_STEP_COUNT = 300;
-    private int transitionCountDown = TRANSITION_STEP_COUNT;
     private string transitionSubtitle;
     private string transitionTitle;
+    private bool dynaCreationReadytoChange = false;
 
     [DllImport("__Internal")]
     private static extern void CopyToClipboard(string str);
@@ -146,7 +141,9 @@ public class StartUpInitialization : MonoBehaviour
             currentDropdownSelectionIndex = dropdown.options.Count - 1;
         if (currentDropdownSelectionIndex >= dropdown.options.Count)
             currentDropdownSelectionIndex = 0;
-        QueueUpACreationChangeToThisScene(currentDropdownSelectionIndex, incrementOrDecrement);
+
+        StartCoroutine(DelayThenSwitchToThisCreation());
+        StartCoroutine(TransitionToBlackAndBack());
     }
 
     void ChangeCreationInAScene(int index)
@@ -240,12 +237,13 @@ public class StartUpInitialization : MonoBehaviour
 
     void ClearButtonClicked()
     {
-        inputFieldCommands.text = "";
-        inputFieldTitle.text = "";
         saveButton.GetComponentInChildren<Text>().text = "Save";
         saveButton.interactable = false;
         dropdown.value = 0;
         currentDropdownSelectionIndex = 0;
+
+        inputFieldCommands.text = "";
+        inputFieldTitle.text = "";
 
         unPauseAnimation();
 
@@ -355,21 +353,24 @@ public class StartUpInitialization : MonoBehaviour
         SaveOrUpdatableActionOccured();
     }
 
-    private void QueueUpACreationChangeToThisScene(int nextCreationIndex, int direction)
+    IEnumerator DelayThenSwitchToThisCreation()
     {
-        sceneIndexTransitionQueue.Enqueue(nextCreationIndex);
-        sceneDirectionTransitionQueue.Enqueue(direction);
+        yield return new WaitForSeconds(0.5f);
+        dynaCreationReadytoChange = true;        
     }
 
-    private void CheckToSeeIfATransitonShouldBeStarted()
+    IEnumerator TransitionToBlackAndBack()
     {
-        if (!transitionInProgress && sceneIndexTransitionQueue.Count != 0)
-        {
-            transistionToThisSaveIndex = sceneIndexTransitionQueue.Dequeue();
-            transistionDirection = sceneDirectionTransitionQueue.Dequeue();
-            transitionCountDown = TRANSITION_STEP_COUNT;
-            transitionInProgress = true;
-        }
+        transitionAnim.SetTrigger("gotoblack");
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(FadeToScreenVisible());
+    }
+
+    IEnumerator FadeToScreenVisible()
+    {
+        transitionAnim.SetTrigger("comeoutofblack");
+        yield return new WaitForSeconds(0.5f);
+        StartMovingTitles(transitionTitle, transitionSubtitle);
     }
 
     private void ChangeToThisScene(SceneDefinition nextScene)
@@ -383,25 +384,6 @@ public class StartUpInitialization : MonoBehaviour
         currentSceneName = nextScene.Title;
 
         skyBoxMaterialChanged = true;
-    }
-
-    private void DoNextStepOfSceneTransition()
-    {
-        var fractionComplete = (float)(TRANSITION_STEP_COUNT - transitionCountDown) / (float)TRANSITION_STEP_COUNT;
-        var smoothF = Mathf.SmoothStep(0f, 360f, fractionComplete);        
-        var rotVector = Quaternion.Euler(0, smoothF, 0);
-        mainCamera.transform.rotation = rotVector;
-
-        if (transitionCountDown == TRANSITION_STEP_COUNT / 2)
-        {
-            dropdown.value = currentDropdownSelectionIndex;  // this will end up calling DropDownValueChanged
-        }
-        if (transitionCountDown <= 0)
-        {
-            transitionInProgress = false;
-            StartMovingTitles(transitionTitle, transitionSubtitle);
-        }
-        transitionCountDown--;
     }
 
     void ShowKeyboardToggleChanged(bool toggleIsOn)
@@ -520,9 +502,11 @@ public class StartUpInitialization : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CheckToSeeIfATransitonShouldBeStarted();
-        if (transitionInProgress)
-            DoNextStepOfSceneTransition();
+        if (dynaCreationReadytoChange)
+        {
+            dynaCreationReadytoChange = false;
+            dropdown.value = currentDropdownSelectionIndex;  // this will end up calling DropDownValueChanged
+        }
 
         if (skyBoxMaterialChanged)
         {
