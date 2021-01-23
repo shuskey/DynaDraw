@@ -1,0 +1,17 @@
+Items for S3 "published gallery"
+Umbrella
+L<Color(2)>UA2R5r8b5l(4m2r[48ZI<Disk>])<Color(4)>c<Color(2)>c<Color(4)>c<Color(2)>c<Color(4)>c<Color(2)>c<Color(4)>c<Color(2)>c<Color(4)>c<Color(2)>c<Color(4)>c
+Instructional
+ZZZZZZ<left()=6rXbXb6l><right()=6rXm6l><left(6)>[[<Color(4)>I<Torus>]<right(4)>[<Color(3)>IU<Disk>]<right(4)>zz[rrbR<Sword>]ZZ<right(6)>zz<World>ZZ<right(6)>ZZZZ<Asteroid>zzzz<right(6)>[Rm<Rocket>]]<say()=<Color(1)>6rz"X"6lZ>[zzbbbb<left(2)><say(torus)><right(1)><say(disk)><right(1)><say(  Sword )><right(1)><say(World)><right(1)><say(Asteroid)><right(1)><say(Rocket)>]
+Disk Orbit
+[zz<World>]6l<dr=[mmmXuU<Color(X)>zz<Disk><Spot>]rr><dr(1)><dr(2)><dr(3)><dr(4)><dr(5)><dr(6)><dr(7)><dr(8)><dr(9)><dr(10)><dr(11)><dr(12)>
+Lime
+I6r96Z<color(3)>(i<Disk>)11c
+Bracelet
+ZZZL[6f6b6r6f6b6r6f6b6r6f]UA2R5r8b5l(4m2r[4ZI<Disk>])<Color(3)>c<Color(1)>c<Color(3)>c<Color(1)>c<Color(3)>c<Color(1)>c<Color(3)>c<Color(1)>c<Color(3)>c<Color(1)>c<Color(3)>c
+Light
+I3l10Z<Disk>5dm<Color(4)>2M12r<color(2)><Point><Color(3)><Spot>m7u7z<Disk>
+Sure Shooter
+<Tilter><Tilter><Color(2)><Closer=6umZ6d>(<Closer>[<Torus>])8c6ubb<Color(1)><Shoot>mm<Point>
+Light Orbit
+10Z<World>iii(*[Rmmmm5z<Rocket>C<Smoke>uuuuumm<Point>])iiciiciiciiciic

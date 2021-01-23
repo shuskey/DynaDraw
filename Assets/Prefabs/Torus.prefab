@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4528153964798733693}
   - component: {fileID: 4528153964798733692}
   - component: {fileID: 4528153964798733691}
+  - component: {fileID: 4457652244309417635}
   m_Layer: 0
   m_Name: TorusMesh
   m_TagString: Untagged
@@ -11645,12 +11646,24 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4528153964798733690}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &4457652244309417635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4528153964798733690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6350076a86a9f574fb6fbd0c0fa135f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4528153965910578776
 GameObject:
   m_ObjectHideFlags: 0

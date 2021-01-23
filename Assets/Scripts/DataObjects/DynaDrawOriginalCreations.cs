@@ -29,7 +29,7 @@ namespace Assets.Scripts.DataObjects
             OriginalCreationsList = new List<DynaDrawSavedItem>()
             {
                 new DynaDrawSavedItem("Hello World", "By Scott Huskey",  // Startup Art
-                "3Z[I<World>][R4m<Point><Rocket><Smoke>][5b6u([(<Color(2)>ff<Tilter>f<Tilter>f<Tilter>f)<Shoot>])[(3rc3rc3rc3rc3rc3rc3rc)]6d5m<Color(0)>[6m3rM3r\"HELLO\"]<Color(6)>[6r8bB4b\"WORLD\"",
+                "3Z[<World>][R4m<Point><Rocket><Smoke>][5b6u([(<Color(2)>ff<Tilter>f<Tilter>f<Tilter>f)<Shoot>])[(3rc3rc3rc3rc3rc3rc3rc)]6d5m<Color(0)>[6m3rM3r\"HELLO\"]<Color(6)>[6r8bB4b\"WORLD\"",
                     "","",""),                
                 // Michael R. Dunlavey 
                 new DynaDrawSavedItem("America", "Original from Michael R. Dunlavey",
