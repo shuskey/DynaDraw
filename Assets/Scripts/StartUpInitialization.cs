@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Assets.Scripts.DataObjects;
 using System.Runtime.InteropServices;
+using UnityEngine.SceneManagement;
 
 public class StartUpInitialization : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class StartUpInitialization : MonoBehaviour
     public Slider speedSlider;
     public Slider fieldOfViewSlider;
     public Toggle showKeyboardToggle;
+    public Button homeMenuButton;
     public Button showMenuButton;
     public Button nextCreationButton;
     public Button previousCreationButton;
@@ -89,6 +91,7 @@ public class StartUpInitialization : MonoBehaviour
         speedSlider.onValueChanged.AddListener(delegate { SpeedSliderChanged(speedSlider.value); });
         fieldOfViewSlider.onValueChanged.AddListener(delegate { FieldOfViewSliderChanged(fieldOfViewSlider.value); });
         showMenuButton.onClick.AddListener(delegate { showMenuClicked(); });
+        homeMenuButton.onClick.AddListener(delegate { SceneManager.LoadScene(0); });
         showKeyboardToggle.onValueChanged.AddListener(delegate { ShowKeyboardToggleChanged(showKeyboardToggle.isOn); });
 
         initialFieldOfView = mainCamera.fieldOfView;

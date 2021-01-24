@@ -6,6 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/DynaDrawScene.unity
+    path: Assets/Scenes/MainMenuScene.unity
+    guid: 8005db54101b66c48a1ce45e0cfb18b8
+  - enabled: 1
+    path: Assets/Scenes/DynaDrawScene.unity
     guid: 98e10f9f9d35fc747bd6d61224e9890b
+  - enabled: 1
+    path: Assets/Scenes/ShootEmScene.unity
+    guid: 686af77c4542dba4a889056538658cc0
+  - enabled: 1
+    path: Assets/Scenes/GalleryScene.unity
+    guid: 36b12576003bd494aa8f348fdb097306
+  - enabled: 1
+    path: Assets/Scenes/CreditsScene.unity
+    guid: 3110ddcaba310184785b5b830c507eec
   m_configObjects: {}
