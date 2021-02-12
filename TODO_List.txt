@@ -37,6 +37,7 @@ Dev OPs:
 [ ] Git tagging or some other 'previous version' reference/storage
 [ ] Unit Tests
 [ ] Deployment pipeline script: Build, Test, Promote, Deploy Release Candidate, then Release Candidate promote to release
+https://blog.redbluegames.com/version-numbering-for-games-in-unity-and-git-1d05fca83022
 	
 New Features Lower Priority Backlog:
 [ ] Kaleidoscope Mirrors

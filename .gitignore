@@ -55,6 +55,7 @@ ExportedObj/
 sysinfo.txt
 
 # Builds
+WebGLBuild
 *.apk
 *.unitypackage
 
