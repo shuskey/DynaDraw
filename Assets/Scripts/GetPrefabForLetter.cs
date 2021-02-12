@@ -5,6 +5,7 @@ using UnityEngine;
 public class GetPrefabForLetter : MonoBehaviour
 {
     public GameObject[] alphabet;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -17,7 +18,7 @@ public class GetPrefabForLetter : MonoBehaviour
             return alphabet[26];
 
         charLetter = System.Char.ToLower(charLetter);
-        
+
         var index = (int)charLetter - (int)'a';
         index = (index > 25) ? 25 : index;
         index = (index < 0) ? 0 : index;

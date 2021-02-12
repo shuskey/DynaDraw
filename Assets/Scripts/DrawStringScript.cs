@@ -16,10 +16,12 @@ public class DrawStringScript : MonoBehaviour
     public GameObject spotlight_prefab;
     public GameObject tilter_prefab;
     public GameObject shooter_prefab;
-    public GameObject letterOpener_prefab;
     public GameObject instructionalsObject;
     public GameObject[] UserSelectable;
+    public GameObject simplePrefab;
     public float zoomFactor = 0.2f;  //20%
+    public float helveticaZoomFactor = 0.15f;  
+
 
     private int maxMultiplyCount = 25;
     private GameObject parentObject;
@@ -37,6 +39,10 @@ public class DrawStringScript : MonoBehaviour
 
     private IDictionary<string, string> userFuntions = new Dictionary<string, string>();
 
+    private float CharXLocation = 0f;
+    private float CharYLocation = 0f;
+
+
     struct copySubString 
     { 
         public int startIndex; 
@@ -51,19 +57,34 @@ public class DrawStringScript : MonoBehaviour
     private Stack<copySubString>userFunctionSubStringStack = new Stack<copySubString>();
 
     Color currentColor;
+
+    // 3D Text Specific Settings
+    int currentRadius = 0;  // 0 Means normal 'left to right' straight line text placement, otherwise this is the Radius of the circle path for the text
+    textAlignment currentTextAlignment = textAlignment.Left;
+    textOrientation currentTextOrientation = textOrientation.Horizontal;
+    textCirclePlacement currentTextCirclePlacement = textCirclePlacement.Face;
+    enum textAlignment { Left, Center, Right }  // Standard text layout rules here
+    enum textOrientation { Horizontal, Vertical}  // Horizontal is normal left-to-right text (word) ordientation. Vertical top-to-bottom "book binding" word orientation 
+    enum textCirclePlacement { Face, Edge, Clock }  // Clock Placement puts text on the face, but text is always up
+
     bool usingShooter = false;
     bool usingTitler = false;
     bool usingDynamicColor = false;
     bool skippingStuffInsideAngleBrackets = false;
 
+    private void Awake()
+    {
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         currentColor = Color.white;
+        currentRadius = 0;
         usingDynamicColor = false;
         usingShooter = usingTitler = false;
         skippingStuffInsideAngleBrackets = false;
-        headObject = parentObject = new GameObject();
+        headObject = parentObject = new GameObject("DrawString Parent");
         parentObject.transform.SetParent(this.transform);
         ProcessDynaDrawCommand(dynaDrawCommands, startIndex: 0, endIndex: dynaDrawCommands.Length - 1);        
     }
@@ -171,7 +192,7 @@ public class DrawStringScript : MonoBehaviour
         {
             char dynaDrawCommand = dynaDrawString[index];
 
-            if (dynaDrawCommand == '>')
+            if (dynaDrawCommand == '>' && !insideQuotes)
             {
                 string functionDefinition = null;
                 userSelectedOperation = userFunctionSubStringStack.Pop();
@@ -193,7 +214,7 @@ public class DrawStringScript : MonoBehaviour
                 }
             }
         
-            if (dynaDrawCommand == '<')
+            if (dynaDrawCommand == '<' && !insideQuotes)
             {
                 userSelectedOperation.startIndex = userSelectedOperation.endIndex = index;
                 userFunctionSubStringStack.Push(new copySubString(index, index));
@@ -215,7 +236,7 @@ public class DrawStringScript : MonoBehaviour
                     lettersSubstring.endIndex = index;
                     var lengthOfString = lettersSubstring.endIndex - lettersSubstring.startIndex - 1;
                     if (lengthOfString > 0)
-                        DisplayTheseLetters(dynaDrawString.Substring(lettersSubstring.startIndex + 1, lengthOfString));
+                        DisplayTheseLetters(dynaDrawString.Substring(lettersSubstring.startIndex + 1, lengthOfString), radiasOfArc: Convert.ToSingle(currentRadius));
                     lettersSubstring.startIndex = lettersSubstring.endIndex = -1;
                     insideQuotes = false;
                 }
@@ -500,8 +521,24 @@ public class DrawStringScript : MonoBehaviour
                 }
                 return null;
             }
+            if (functionName.ToLower() == "circletext")
+            {
+                if (System.Int32.TryParse(functionCallMatch.Groups[2].ToString(), out int radius))
+                {
+                    radius = Mathf.Min(radius, 200);
+                    radius = Mathf.Max(radius, 0);
+                    currentRadius = radius;
+
+                }
+            }
+            if (functionName.ToLower() == "linetext")
+            {                
+                currentRadius = 0;                
+            }
+
             // function(1)="Xf6r" - all occurances of X are replaced with 1
             string functionDefinition;
+
             if (userFuntions.TryGetValue(functionName, out functionDefinition))
             {                
                 return functionDefinition.Replace("X", functionCallMatch.Groups[2].ToString());
@@ -510,28 +547,271 @@ public class DrawStringScript : MonoBehaviour
 
         return null;
     }
-
-    private void DisplayTheseLetters(string lettersToDisplay)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="lettersToDisplay"></param>
+    /// String of 3D Helvetical characters to display
+    /// <param name="radiasOfArc"></param>
+    /// A 0f here indicates regular linear text - left to right
+    /// Otherwise the text will follow an arc this distance out from the headObject
+    private void DisplayTheseLetters(string lettersToDisplay, float radiasOfArc)
     {
-        var getPrefabForLetterScript = letterOpener_prefab.GetComponentInChildren<GetPrefabForLetter>();
-        
+        var position = new Vector3(0, radiasOfArc, 0);
+        var rotation = 0f;
         var arrayOfChars = lettersToDisplay.ToCharArray();
-        bool skipAngleBracket = false;
+
         foreach (var nextCharater in arrayOfChars)
         {
-            if (nextCharater == '<')
-                skipAngleBracket = true;
-            if (nextCharater == '>')
-                skipAngleBracket = false;
-            if (skipAngleBracket)
-                continue;           
-            var prefab = getPrefabForLetterScript.GetPrefab(nextCharater);
-            go = Instantiate(prefab, headObject.transform);
-            go.transform.SetParent(headObject.transform);
-            headObject = go;
-            var letterColoeScript = go.GetComponentInChildren<LetterColor>();
-            letterColoeScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+
+            go = instantiateNewGameObjectHere($"{nextCharater} Rotation", headObject);
+            
+            go.transform.localRotation = Quaternion.Euler(0f, 0f, -rotation);
+
+            //Setup parent with the needed translation (postion) and attach to DynaString Hiearchy/Transform
+            var holderParent = instantiateNewGameObjectHere($"{nextCharater} Holder", go);
+            
+            holderParent.transform.localPosition = position;
+            
+            var spacing = displayThisLetter(holderParent, nextCharater, rotation);
+
+            if (radiasOfArc == 0f)
+            {
+                position += new Vector3(spacing, 0, 0);
+                
+            }
+            else
+            {
+                position = new Vector3(0, radiasOfArc, 0);
+                
+                rotation += Mathf.Atan(spacing / radiasOfArc) * Mathf.Rad2Deg;
+                
+            }            
+
+            
         }
+        headObject = go;
+
+    }
+
+    private GameObject instantiateNewGameObjectHere(string newGameObjectName, GameObject parent)
+    {
+        //Setup parent with the needed Rotation
+        var newGameObject = new GameObject(newGameObjectName);
+        newGameObject.transform.SetParent(parent.transform);
+        // I am finding that a new GameObject is getting added with zero rotation in World Coordinates, which actually offsets the local rotation
+        newGameObject.transform.localRotation = Quaternion.identity;
+        newGameObject.transform.localPosition = Vector3.zero;
+        newGameObject.transform.localScale = Vector3.one;
+        
+        return newGameObject;
+    }
+    private GameObject instantiatePrefabHere(GameObject prefab, GameObject parent)
+    {
+        var newGameObject = Instantiate(prefab, parent.transform);
+        newGameObject.transform.SetParent(parent.transform);
+        // I am finding that a new GameObject is getting added with zero rotation in World Coordinates, which actually offsets the local rotation
+        newGameObject.transform.localRotation = Quaternion.identity;
+        newGameObject.transform.localPosition = Vector3.zero;
+        newGameObject.transform.localScale = Vector3.one;
+        return newGameObject;
+    }
+
+    private void oldstuff()
+    {
+        // Create Parent Child Duo for the Letter
+        // Parent includes the appropriate Transform only translate/rotate only
+        // child should sit at 0,0,0 rotate 0 relative to its parent
+
+        // discover the child
+        Char nextCharacter = ' ';
+
+        var letterToShowPrefab = getLetterModelForChar(nextCharacter);//getPrefabForLetterScript.GetPrefab(nextCharater);
+
+        //Setup parent and attach to DynaString Hiearchy/Transform
+        var holderParent = new GameObject($"{nextCharacter} holder");
+        holderParent.transform.SetParent(headObject.transform);
+        // I am finding that a new GameObject is getting added with zero rotation in World Coordinates, which actually offsets the local rotation
+        holderParent.transform.localRotation = Quaternion.identity;
+        holderParent.transform.localScale = Vector3.one;
+
+        if (letterToShowPrefab != null) // not the space charater
+        {
+            //Add the Child first, then Set Parents Translate/rotate so that child is set at origin of Parent
+            //attach the child and attach stripts that it needs 
+            var letterToShowGameObject = Instantiate(letterToShowPrefab, holderParent.transform);
+            letterToShowGameObject.transform.SetParent(holderParent.transform);
+
+            var letterColorScript = letterToShowGameObject.AddComponent<LetterColor>();
+            letterColorScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+            //Offset child so it apprears at the parents PREVIOUS origin
+            letterToShowGameObject.transform.localScale = new Vector3(helveticaZoomFactor, helveticaZoomFactor, helveticaZoomFactor);
+
+            var letterWidthSpacing = helveticaZoomFactor * (letterToShowPrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size.x + 4f);
+
+            letterToShowGameObject.transform.localPosition = new Vector3(-letterWidthSpacing, 0, 0);
+
+            var worldTransform = letterToShowGameObject.transform.position;
+            //var distance = worldTransform.magnitude;
+            var distance = Vector3.Distance(parentObject.transform.position, letterToShowGameObject.transform.position);
+            var left = Vector3.Cross(worldTransform, Vector3.up).normalized;
+            var localLeft = transform.InverseTransformDirection(left);
+            var lossyScale = letterToShowGameObject.transform.lossyScale.x;
+            var ratio = (letterWidthSpacing * letterToShowGameObject.transform.lossyScale.x / 2) / distance;
+            var angle = Mathf.Acos(ratio) * Mathf.Rad2Deg;
+
+            //letterToShowGameObject.transform.localPosition = new Vector3(helveticaZoomFactor * (-letterToShowPrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size.x + 4f), 0, 0);
+
+            //Lastly do the parent transform This allows it child to still remain (in world coordinates) at the parents origin
+            //holderParent.transform.localPosition = new Vector3(helveticaZoomFactor * (letterToShowPrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size.x + 4f), 0, 0);
+            //holderParent.transform.RotateAround(parentObject.transform.position,Vector3.back, 7f);
+            //angle = 7f;
+
+            holderParent.transform.localRotation = Quaternion.AngleAxis(angle, Vector3.back);
+            holderParent.transform.localPosition = Vector3.zero + Quaternion.AngleAxis(angle - 90, Vector3.back) * new Vector3(distance, 0, 0);
+            //holderParent.transform.localPosition = new Vector3(letterWidthSpacing, 0, 0);// * localLeft;
+        }
+        else
+        {
+            //This is how a Space is handled
+            //holderParent.transform.localPosition = new Vector3(12f * helveticaZoomFactor, 0, 0);
+            var letterWidthSpacing = helveticaZoomFactor * 12f;
+
+            var left = Vector3.Cross(holderParent.transform.position, Vector3.up).normalized;
+            var localLeft = transform.InverseTransformDirection(left);
+            holderParent.transform.localPosition = letterWidthSpacing * localLeft;
+        }
+        headObject = holderParent;
+    }
+
+    private float displayThisLetter(GameObject parent, Char letterToDisplay, float rotation)
+    {
+
+        float letterWidthSpacing;
+
+        // Create Parent Child Duo for the Letter
+        // Parent includes the appropriate Transform only translate/rotate only
+        // child should sit at 0,0,0 rotate 0 relative to its parent
+
+        // discover the child
+
+        var letterToShowPrefab = getLetterModelForChar(letterToDisplay);//getPrefabForLetterScript.GetPrefab(nextCharater);
+
+        if (letterToDisplay != ' ' && letterToShowPrefab != null) // not the space charater
+        {
+            //Add the Child first, then Set Parents Translate/rotate so that child is set at origin of Parent
+            //attach the child and attach stripts that it needs 
+            var letterToShowGameObject = Instantiate(letterToShowPrefab, parent.transform);
+            letterToShowGameObject.transform.SetParent(parent.transform);
+            // I am finding that a new GameObject is getting added with zero rotation in World Coordinates, which actually offsets the local rotation
+            letterToShowGameObject.transform.localRotation = Quaternion.identity;
+
+
+            var letterColorScript = letterToShowGameObject.AddComponent<LetterColor>();
+            letterColorScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+            //Offset child so it apprears at the parents PREVIOUS origin
+            letterToShowGameObject.transform.localScale = new Vector3(helveticaZoomFactor, helveticaZoomFactor, helveticaZoomFactor);
+
+            letterWidthSpacing = helveticaZoomFactor * (letterToShowPrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size.x + 4f);
+
+        //    letterToShowGameObject.transform.localPosition = new Vector3(-letterWidthSpacing, 0, 0);
+        }
+        else
+        {
+            //This is how a Space is handled
+            //holderParent.transform.localPosition = new Vector3(12f * helveticaZoomFactor, 0, 0);
+            letterWidthSpacing = helveticaZoomFactor * 12f;
+        }
+       //// parent.transform.localPosition = new Vector3(letterWidthSpacing, 0, 0);
+
+        return letterWidthSpacing;
+    }
+
+    GameObject getLetterModelForChar(char charLetter)
+    {
+        //return simplePrefab;
+        if (charLetter == ' ')
+            return null;
+        if (charLetter == '/')
+            return transform.Find("_Alphabets/" + "slash").gameObject; //special case for "/" since it cannot be used for obj name in fbx					
+        if (charLetter == '.')
+            return transform.Find("_Alphabets/" + "period").gameObject; //special case for "." - naming issue	
+        return transform.Find("_Alphabets/" + charLetter).gameObject;
+    }
+
+void DisplayTheseHelveticaLetters(string lettersToDisplay)
+    {
+        CharXLocation = CharYLocation = 0f;
+        for (int ctr = 0; ctr <= lettersToDisplay.Length - 1; ctr++)
+        {
+
+            //dealing with linebreaks "\n"
+            if (lettersToDisplay[ctr].ToString().ToCharArray()[0] == "\n"[0])
+            {
+                //Debug.Log ("\\n detected");
+                CharXLocation = 0;
+                CharYLocation -= 22f;
+                continue;
+            }
+            string nextCharacter = lettersToDisplay[ctr].ToString();
+
+
+            if (nextCharacter != " ")
+            {
+
+                GameObject LetterToShow;
+
+                if (nextCharacter == "/")
+                {
+                    LetterToShow = transform.Find("_Alphabets/" + "slash").gameObject; //special case for "/" since it cannot be used for obj name in fbx					
+                }
+                else if (nextCharacter == ".")
+                {
+                    LetterToShow = transform.Find("_Alphabets/" + "period").gameObject; //special case for "." - naming issue	
+                }
+                else
+                {
+                    LetterToShow = transform.Find("_Alphabets/" + nextCharacter).gameObject;
+                }
+
+                //Debug.Log(LetterToShow);
+
+                
+                var letterHolderGameObject = new GameObject($"{nextCharacter} holder");
+                letterHolderGameObject.transform.SetParent(headObject.transform);
+
+                go = Instantiate(LetterToShow, letterHolderGameObject.transform);
+                var letterColorScript = go.AddComponent<LetterColor>();
+                go.transform.SetParent(letterHolderGameObject.transform);
+                //position the new char
+
+
+                //go.transform.localScale = new Vector3(go.transform.localScale.x * helveticaZoomFactor,
+                //    go.transform.localScale.y * helveticaZoomFactor,
+                //    go.transform.localScale.z * helveticaZoomFactor);
+                Debug.Log($"x Scale = {go.transform.localScale.x}, y Scale = {go.transform.localScale.y}");
+                Debug.Log($"CharXLocation = {CharXLocation}, CharYLocation = {CharYLocation}");
+              //  go.transform.localPosition = new Vector3(CharXLocation * go.transform.localScale.x, CharYLocation * go.transform.localScale.y, 0);
+                go.transform.localPosition = new Vector3(CharXLocation, CharYLocation, 0);
+
+                headObject = letterHolderGameObject;
+                letterColorScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+
+                //LetterToShow.GetComponent<MeshRenderer>().materials[0].color = currentColor;
+
+                //find the width of the letter used
+                Mesh mesh = LetterToShow.GetComponent<MeshFilter>().sharedMesh;
+                Bounds bounds = mesh.bounds;
+                CharXLocation = bounds.size.x + 4f;
+                //Debug.Log (bounds.size.x*ObjScale.x);
+            }
+            else
+            {
+                CharXLocation += 8f;
+            }
+
+        }   
+
     }
 
     // Update is called once per frame

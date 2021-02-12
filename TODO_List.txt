@@ -1,13 +1,14 @@
 BUG FIX / IMPROVE
 [ ] Shooter will shoot backwards at certain angles
 [ ] Would be nice if shooter cannon balls took on the current color
-[ ] More full 3d font: upper + lower + numbers + punctuation
+->[X] More full 3d font: upper + lower + numbers + punctuation - Also have Circle Text!
 [ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue
+[ ] Allow a Shooter to be applied to the Rocket
 
 New Features - Higher Priority:
-[ ] Startup splash / menu Welcome screen
+[/] Startup splash / menu Welcome screen
     - continue as Guest, login/signup (just need unique/verified email)
-	- Select play option:  Classic Draw, Kaleidoscope, Shoot-em-up, Gallery
+	[X] Select play option:  Classic Draw, Shoot-em-up, Gallery, Credits
 [ ] Objects in drawing are targets for cannon balls
    - Objects Explode
    - Objects Disconnect and gravity and velocity/snip take over

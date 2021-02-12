@@ -1,4 +1,5 @@
-﻿Write-S3Object -BucketName photoloom.com -File ..\..\WebGLBuildDynaDraw\DynaDrawInstructions.pdf -Key dynadraw/DynaDrawInstructions.pdf
+﻿#should see if newer version of instructions are in current directory then copy it to the WebGLBuildDynaDraw directory
+Write-S3Object -BucketName photoloom.com -File ..\..\WebGLBuildDynaDraw\DynaDrawInstructions.pdf -Key dynadraw/DynaDrawInstructions.pdf
 Write-S3Object -BucketName photoloom.com -File ..\..\WebGLBuildDynaDraw\index.html -Key dynadraw/index.html
 
 Write-S3Object -BucketName photoloom.com -Folder ..\..\WebGLBuildDynaDraw\TemplateData -KeyPrefix dynadraw/TemplateData

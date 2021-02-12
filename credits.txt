@@ -1,0 +1,39 @@
+3D Dyna-Draw
+by Scott Huskey
+Made with the
+Unity Game Engine
+
+Adapted from
+Michael R. Dunlavey's
+Dyna-Draw, 1989
+
+Third party assets:
+Asteroids Pack
+by Mark Dion
+
+Atom Rocket Model
+by Axinova
+
+Elven Sword
+by Mana Station
+
+Simple Helvetica
+by Studio Pepwuper
+
+Planet Earth Free
+by headwards
+
+Skybox Series Free
+by Avionx
+
+Traffic Cones
+by Ninjacupcake Indie Studio
+
+Thank you to my Beta Testers:
+Jason Nazar
+Laura Huskey
+Arie Babayan
+
+Thank you to all you 
+other "inspiring people"
+You know who you are !!!
