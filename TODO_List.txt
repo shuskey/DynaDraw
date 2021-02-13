@@ -1,7 +1,7 @@
 BUG FIX / IMPROVE
 [ ] Shooter will shoot backwards at certain angles
 [ ] Would be nice if shooter cannon balls took on the current color
-->[X] More full 3d font: upper + lower + numbers + punctuation - Also have Circle Text!
+[ ] Left/Center/Right Justification, Horiz/Vert Words, Disk Face/Edge/Clock options for text orientation
 [ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue
 [ ] Allow a Shooter to be applied to the Rocket
 
@@ -9,24 +9,28 @@ New Features - Higher Priority:
 [/] Startup splash / menu Welcome screen
     - continue as Guest, login/signup (just need unique/verified email)
 	[X] Select play option:  Classic Draw, Shoot-em-up, Gallery, Credits
-[ ] Objects in drawing are targets for cannon balls
+	
+[ ] SHOOT EM UP - Objects in drawing are targets for cannon balls
    - Objects Explode
    - Objects Disconnect and gravity and velocity/snip take over
    - Shoot/explode sounds
    - Score/timed?
-[ ] Public Gallery for sharing:
+ 
+[ ] GALLERY - Public Gallery for sharing:
+[ ] Need easy account creation/verify email - needed to publish, vote, comments
    - S3 for storage: Folders for Published / ReviewForPublish / Trash
     - Filename: username_title_date
 	- Json file contents:
-   CreationID, Title, Tags, Author Comments, Submitted Date, Author Email
-   DynaText Scene, Aspect Ratio, Speed, Giff Animation
-   Active (soft delete), Published, Featured, Upvotes, Downvotes, Views, Comment Count, Report Count
-   Comments[] 
+		   CreationID, Title, Tags, Author Comments, Submitted Date, Author Email
+		   DynaText Scene, Aspect Ratio, Speed, Giff Animation
+		   Active (soft delete), Published, Featured, Upvotes, Downvotes, Views, Comment Count, Report Count
+		   Comments[] 
 [ ] Gallery Button at top
 [ ] Gallery major sections - mine - Featured, Recent, Popular, Admin screen
 [ ] Admin screen to approve Publish requests, mark as featured, review comments, review "Reported", soft Delete
-[ ] Need easy account creation/verify email - needed to publish, vote, comments
-[ ] Tilter in front of (Classic) creations without Tilter: 6d12r<ATilter><ATilter>6u12l
+
+[ ] CLASSIC - Tilter in front of (Classic) creations without Tilter: 6d12r<ATilter><ATilter>6u12l
+    Or just a 3D rotater/home for 3D viewing many angles
 
     ======
 [ ] Code cleanup
@@ -34,22 +38,23 @@ Dev OPs:
 [ ] Cross link Itch.io to Photoloom ??
 [ ] Return to compressed deploy files with Unity fixes it
 [ ] versioning of static web content to assit with cache refresh
-[ ] Git tagging or some other 'previous version' reference/storage
+
 [ ] Unit Tests
 [ ] Deployment pipeline script: Build, Test, Promote, Deploy Release Candidate, then Release Candidate promote to release
-https://blog.redbluegames.com/version-numbering-for-games-in-unity-and-git-1d05fca83022
+  [X] Build as a Editor Menu item
+  [ ] Deploy as a Editor Menu item
 	
 New Features Lower Priority Backlog:
 [ ] Kaleidoscope Mirrors
 [ ] Other types of joints
 	- Rag Doll dangle
-[ ]  Add a version or date to the home screen or titles
 [ ] Lighting options - Dark, or other lighting	
 [ ] Add fog settings
 [/] Add other cool 3D Objects: - make discoverable - so easy to add
          Parameters: Assigned Letter "W", auto pilot rotate to direction true/false
 		 color settable, shooter offset/direction
 		 Using <> to let user enter the name
+[ ] Code generated instructions, the code can tell you its capabilities
 [ ] Add Instructional scene that shows all UserSelectable objects and their names
 	 - Fruit
 	 - Flower
@@ -75,8 +80,12 @@ New Features Lower Priority Backlog:
 ------
 Completed
 ------
-[X]  Add a disk 3D object - Like BYU TV logo/graphics  Using "Q"
-[X] Implement on screen keyboard(s)
+[X] More full 3d font: upper + lower + numbers + punctuation - Thank you Simple Helvetica! Also have Circle Text!
+[X] Git tagging or some other 'previous version' reference/storage
+[X] Add a version or date to the home screen or titles
+    https://blog.redbluegames.com/version-numbering-for-games-in-unity-and-git-1d05fca83022
+[X] Add a disk 3D object - Like BYU TV logo/graphics  Using "Q"
+[X] Implement on screen keyboard(s) (depricated)
     - start with a simple Backspace, left arrow, right arrow, Delete, Letter 
 [X] Deploy script to automated new code release deploys
 [X] Scene Transitions that kind and gentle - the current "360 Spin" is too much
@@ -85,7 +94,7 @@ Completed
 [X] Program letters ( ) c [ ] missing from list of Keyboards
 [X] Host this myself on AWS at photoloom.com/dynadraw - now runs on iOS devices
 [X] Local save goes away every time I republish to itch.io - would a static URL help?
-[X]    Perhaps look at hosting this myself
+[X] Perhaps look at hosting this myself
 [X] Cursor position visual only appears after a text update, should always be visible
 [X] Cursor not shown when edit field looses focus
 [X] Globe resource has a Cyan haze in Webgl version
@@ -93,7 +102,7 @@ Completed
 [X] Turn Cursor Cones off when 'show controls' are OFF
 [X] Need instructions on Photoloom/dynadraw page (quick HTML) - did pdf
 [X] Need local save of my masterpieces to include Scene Settings: currentSceneName, , fieldOfView, timeScale
-[X] Speed Slider needs beter ability to choose slow motion - right now its hard to get a slowed setting
+[X] Speed Slider needs better ability to choose slow motion - right now its hard to get a slowed setting
 [X] Cooler, more interesting horizon/environment
 [X] Titlers and shooters should have a specific "look"
 [X] Add instructional graphics for keyboard and gamepad shooter/tilter usage

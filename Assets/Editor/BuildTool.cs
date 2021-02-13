@@ -14,12 +14,12 @@ public class BuildTool : MonoBehaviour
         // https://docs.unity3d.com/ScriptReference/BuildPipeline.BuildPlayer.html
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = new[] 
-        { 
-            "Assets/Scenes/CreditsScene.unity", 
-            "Assets/Scenes/DynaDrawScene.unity",
-            "Assets/Scenes/GalleryScene.unity",
+        {
             "Assets/Scenes/MainMenuScene.unity",
-            "Assets/Scenes/ShootEmScene.unity"
+            "Assets/Scenes/DynaDrawScene.unity",
+            "Assets/Scenes/ShootEmScene.unity",
+            "Assets/Scenes/GalleryScene.unity",
+            "Assets/Scenes/CreditsScene.unity"             
         };
         buildPlayerOptions.locationPathName = "WebGLBuild";
         buildPlayerOptions.target = BuildTarget.WebGL;
