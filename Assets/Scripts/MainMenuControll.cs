@@ -1,4 +1,3 @@
-using System.Web;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -46,7 +45,7 @@ public class MainMenuControll : MonoBehaviour
             return;
         
         var myUri = new System.Uri(webglUrl);
-        var dynastring = HttpUtility.ParseQueryString(myUri.Query).Get("dynastring");
+        var dynastring = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("dynastring");
 
         //If we have a sharing style URL here, then start in Classic 3D Dyna Draw
         if (string.IsNullOrEmpty(dynastring))
