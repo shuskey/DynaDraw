@@ -60,9 +60,9 @@ public class DrawStringScript : MonoBehaviour
 
     // 3D Text Specific Settings
     int currentRadius = 0;  // 0 Means normal 'left to right' straight line text placement, otherwise this is the Radius of the circle path for the text
-    textAlignment currentTextAlignment = textAlignment.Left;
-    textOrientation currentTextOrientation = textOrientation.Horizontal;
-    textCirclePlacement currentTextCirclePlacement = textCirclePlacement.Face;
+    //textAlignment currentTextAlignment = textAlignment.Left;
+    //textOrientation currentTextOrientation = textOrientation.Horizontal;
+    //textCirclePlacement currentTextCirclePlacement = textCirclePlacement.Face;
     enum textAlignment { Left, Center, Right }  // Standard text layout rules here
     enum textOrientation { Horizontal, Vertical}  // Horizontal is normal left-to-right text (word) ordientation. Vertical top-to-bottom "book binding" word orientation 
     enum textCirclePlacement { Face, Edge, Clock }  // Clock Placement puts text on the face, but text is always up
