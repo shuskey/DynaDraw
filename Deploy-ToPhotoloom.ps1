@@ -1,7 +1,7 @@
 ﻿Set-Location .\WebGLBuild
 
 #should see if newer version of instructions are in current directory then copy it to the WebGLBuildDynaDraw directory
-Copy-Item '..\DynaDrawInstructions.pdf' .
+Copy-Item '..\DynaDrawInstructions.pdf' ..\WebGLBuild
 
 Write-S3Object -BucketName photoloom.com -File .\DynaDrawInstructions.pdf -Key dynadraw/DynaDrawInstructions.pdf
 Write-S3Object -BucketName photoloom.com -File .\index.html -Key dynadraw/index.html
