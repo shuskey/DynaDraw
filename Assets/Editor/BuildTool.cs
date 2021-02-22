@@ -4,7 +4,7 @@ using UnityEditor.Build.Reporting;
 
 public class BuildTool : MonoBehaviour
 {
-    [MenuItem("Build/Build Web GL with Version")]
+    [MenuItem("Build/Build and Run WebGL with Version")]
     public static void MyBuild()
     {
         // This gets the Build Version from Git via the `git describe` command
@@ -23,7 +23,7 @@ public class BuildTool : MonoBehaviour
         };
         buildPlayerOptions.locationPathName = "WebGLBuild";
         buildPlayerOptions.target = BuildTarget.WebGL;
-        buildPlayerOptions.options = BuildOptions.None;
+        buildPlayerOptions.options = BuildOptions.AutoRunPlayer;
 
         BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
         BuildSummary summary = report.summary;

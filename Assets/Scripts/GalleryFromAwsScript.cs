@@ -1,33 +1,28 @@
-#if NOTNOW
 using Assets.Scripts.DataObjects;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using UnityEngine.Networking;
-#endif
 using System.Collections;
 using UnityEngine;
 
 public class GalleryFromAwsScript : MonoBehaviour
 {
+    public GameObject galleryCardPrefab;
+    public GameObject galleryCardPanel;
     private const string URL = "https://6bdrmwd3kc.execute-api.us-west-2.amazonaws.com/prod/";
-#if NOTNOW
     private List<DynaDrawGalleryItem> dynaDrawGalleryItemsList;
-#endif
 
     public void GenerateRequest()
     {
-#if NOTNOW
         StartCoroutine(ProcessRequest(URL));
-#endif
     }
-#if NOTNOW
 
     private IEnumerator ProcessRequest(string uri)
     {
         UnityWebRequest request = UnityWebRequest.Get(uri);
         yield return request.SendWebRequest();
 
-        if (request.result ==  UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
         {
             Debug.Log(request.error);
             Debug.Log($"Trouble contacting the AWS API Gateway for GetAllPublishedGalleryItems.");
@@ -41,8 +36,13 @@ public class GalleryFromAwsScript : MonoBehaviour
 
             var awsApiResponse = JsonConvert.DeserializeObject<AwsApiGetAllPublishedGalleryItemsResponse>(resultText);
             dynaDrawGalleryItemsList = awsApiResponse.body;
+
+            foreach (var item in dynaDrawGalleryItemsList)
+            {
+                var gallerycard = Instantiate(galleryCardPrefab, galleryCardPanel.transform);
+                gallerycard.transform.SetParent(galleryCardPanel.transform);
+                gallerycard.GetComponentInChildren<GalleryCardScript>().Initialize(item);
+            }
         }
-
-#endif
-
+    }
 }

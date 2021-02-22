@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,12 +18,18 @@ namespace Assets.Scripts.DataObjects
         public string dynaDrawSavedItem { get; set; }
         public int type { get; set; }
 
-        public DynaDrawGalleryItem(string dynadrawcommands)
+        public string authorId = "";
+        public string description = "";
+        public int viewCount = 0;
+        public int upVoteCount = 0;
+        public int downVoteCount = 0;
+        public bool featuredCategory = true;
+        public bool craziestCategory = false;
+
+        public DynaDrawGalleryItem(string dynaDrawCommands)
         {
-            id = "";
-            creationDateTime = DateTime.UtcNow;
-            dynaDrawSavedItem = dynadrawcommands;
-            type = (int)itemType.Undefined;
+            dynaDrawSavedItem =  JsonConvert.SerializeObject(new DynaDrawSavedItem(dynaDrawCommands));
         }
+
     }  
 }

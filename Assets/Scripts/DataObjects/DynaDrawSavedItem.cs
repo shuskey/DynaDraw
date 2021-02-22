@@ -17,6 +17,15 @@ namespace Assets.Scripts.DataObjects
         public string FieldOfView { get; set; }
         public string TimeScale { get; set; }
 
+        public DynaDrawSavedItem()
+        {
+            Title = "";
+            Subtitle = "";
+            DynaDrawCommands = "";
+            SceneName = "";
+            FieldOfView = "";
+            TimeScale = "";
+        }
 
         public DynaDrawSavedItem(string title, string subtitle, string dynadrawcommands, string sceneName, string fieldOfView, string timeScale)
         {
@@ -27,6 +36,14 @@ namespace Assets.Scripts.DataObjects
             FieldOfView = fieldOfView;
             TimeScale = timeScale;
         }
-    }
-    
+        public DynaDrawSavedItem(string dynadrawcommands)
+        {
+            Title = "";
+            Subtitle = "";
+            DynaDrawCommands = dynadrawcommands;
+            SceneName = "";
+            FieldOfView = "";
+            TimeScale = "";
+        }
+    } 
 }
