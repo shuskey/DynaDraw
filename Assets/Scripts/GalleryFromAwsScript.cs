@@ -9,7 +9,7 @@ public class GalleryFromAwsScript : MonoBehaviour
 {
     public GameObject galleryCardPrefab;
     public GameObject galleryCardPanel;
-    private const string URL = "https://6bdrmwd3kc.execute-api.us-west-2.amazonaws.com/prod/";
+    private const string URL = "https://www.photoloom.com/api/gallery";
     private List<DynaDrawGalleryItem> dynaDrawGalleryItemsList;
 
     public void GenerateRequest()
@@ -32,10 +32,9 @@ public class GalleryFromAwsScript : MonoBehaviour
         else
         {
             var resultText = request.downloadHandler.text;
-            Debug.Log(resultText);
+            //Debug.Log(resultText);
 
-            var awsApiResponse = JsonConvert.DeserializeObject<AwsApiGetAllPublishedGalleryItemsResponse>(resultText);
-            dynaDrawGalleryItemsList = awsApiResponse.body;
+            var dynaDrawGalleryItemsList = JsonConvert.DeserializeObject<List<DynaDrawGalleryItem>>(resultText);
 
             foreach (var item in dynaDrawGalleryItemsList)
             {
