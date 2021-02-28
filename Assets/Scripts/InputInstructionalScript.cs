@@ -12,12 +12,6 @@ public class InputInstructionalScript : MonoBehaviour
     private GameObject[] allInstructionals;
     enum TagsICareAbout { Shoot, Tilt, ShootTilt, MobileJoystick, MobileButton }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
     private void Awake()
     {
         GetAllInstructionalsAndMakeNotVisible();
@@ -44,26 +38,20 @@ public class InputInstructionalScript : MonoBehaviour
         {
             bool newActiveState = false;
             
-            if (showShoot && !showTilt && instructional.tag == TagsICareAbout.Shoot.ToString())
+            if (showShoot && !showTilt && instructional.CompareTag(TagsICareAbout.Shoot.ToString()))
                 newActiveState = true;
-            if (!showShoot && showTilt && instructional.tag == TagsICareAbout.Tilt.ToString())
+            if (!showShoot && showTilt && instructional.CompareTag(TagsICareAbout.Tilt.ToString()))
                 newActiveState = true;
-            if (showShoot && showTilt && instructional.tag == TagsICareAbout.ShootTilt.ToString())
+            if (showShoot && showTilt && instructional.CompareTag(TagsICareAbout.ShootTilt.ToString()))
                 newActiveState = true;
 
-            if (showShoot && instructional.tag == TagsICareAbout.MobileButton.ToString())
+            if (showShoot && instructional.CompareTag(TagsICareAbout.MobileButton.ToString()))
                 newActiveState = true;
-            if (showTilt && instructional.tag == TagsICareAbout.MobileJoystick.ToString())
+            if (showTilt && instructional.CompareTag(TagsICareAbout.MobileJoystick.ToString()))
                 newActiveState = true;
 
             instructional.SetActive(newActiveState);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
 }

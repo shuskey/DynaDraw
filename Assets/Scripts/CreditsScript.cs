@@ -15,12 +15,6 @@ public class CreditsScript : MonoBehaviour
     float phase2repeatTime = 75;
     int logoPhase = 0;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-         
-    }
-
     // Update is called once per frame
     void Update()
     {

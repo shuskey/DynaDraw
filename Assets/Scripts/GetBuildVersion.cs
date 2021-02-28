@@ -10,10 +10,4 @@ public class GetBuildVersion : MonoBehaviour
     {        
         gameObject.GetComponent<Text>().text = $"Version {Application.version}";
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

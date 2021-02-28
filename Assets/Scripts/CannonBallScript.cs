@@ -11,9 +11,4 @@ public class CannonBallScript : MonoBehaviour
         Destroy(gameObject, timeToLive);   
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

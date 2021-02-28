@@ -6,12 +6,6 @@ public class GetPrefabForHelvetica : MonoBehaviour
 {
     public float helveticaZoomFactor = 0.3f;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
     public GameObject GetPrefab(char charLetter)
     {
         GameObject LetterToShow;
@@ -30,11 +24,5 @@ public class GetPrefabForHelvetica : MonoBehaviour
         }
 
         return LetterToShow;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

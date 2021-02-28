@@ -17,12 +17,6 @@ public class GalleryCardScript : MonoBehaviour
     private DynaDrawGalleryItem dynaDrawGalleryItem;
     private System.DateTime creationDateTime;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     public void Initialize(string dynaDrawSavedItemString)  //Mock up a new one
     {
         dynaDrawGalleryItem = new DynaDrawGalleryItem(dynaDrawSavedItemString);
@@ -43,12 +37,5 @@ public class GalleryCardScript : MonoBehaviour
         dynaDrawCommand = dynaDrawSavedItem.DynaDrawCommands;
         creationDateTime = dynaDrawGalleryItem.creationDateTime;
         //TODO thumbnail = GetThumbnailFromS3(id);
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

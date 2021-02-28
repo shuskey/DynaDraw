@@ -14,10 +14,6 @@ public class CannonShooterScript : MonoBehaviour
         tiltControl = new TilterControls();
         tiltControl.Cannon.Shoot.performed += cntxt => Shoot();        
     }
-    void Start()
-    {
-        
-    }
 
     void Shoot()
     {
@@ -25,13 +21,6 @@ public class CannonShooterScript : MonoBehaviour
         projectile.transform.parent = null; // Set it Free
         projectile.GetComponent<Rigidbody>().AddForce(projectile.transform.up * shootForce);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
 
     void OnEnable()
     {

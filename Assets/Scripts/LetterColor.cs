@@ -7,12 +7,6 @@ public class LetterColor : MonoBehaviour
     [SerializeField] [Tooltip("Color")] private Color color = Color.white;
     [SerializeField] [Tooltip("Taste the rainbow!")] private bool useDynamicColor = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
     public void SetColor(Color color, bool useDynamic)
     {
         var children = GetComponentsInChildren<Renderer>();

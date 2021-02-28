@@ -406,12 +406,12 @@ public class StartUpInitialization : MonoBehaviour
         for (int i = 0; i < canvasObject.transform.childCount - 1; i++ )
         {
             var go = canvasObject.transform.GetChild(i).gameObject;
-            if (go.transform.tag == TagsICareAbout.NoHide.ToString() || go.transform.tag == TagsICareAbout.Keyboard.ToString())
+            if (go.transform.CompareTag(TagsICareAbout.NoHide.ToString()) || go.transform.CompareTag(TagsICareAbout.Keyboard.ToString()))
             {
                 continue;
             }
                 
-            if (go.transform.tag == TagsICareAbout.InverseHide.ToString())            {
+            if (go.transform.CompareTag(TagsICareAbout.InverseHide.ToString()))            {
                 go.SetActive(!toggleIsOn);
                 continue;
             }

@@ -20,13 +20,13 @@ public class DrawStringScript : MonoBehaviour
     public GameObject[] UserSelectable;
     public GameObject simplePrefab;
     public float zoomFactor = 0.2f;  //20%
-    public float helveticaZoomFactor = 0.15f;  
+    public float helveticaZoomFactor = 0.15f;
 
 
     private int maxMultiplyCount = 25;
     private GameObject parentObject;
     private GameObject headObject;
-    private Stack<GameObject>headObjectStack = new Stack<GameObject>();
+    private Stack<GameObject> headObjectStack = new Stack<GameObject>();
     private GameObject go;
     private ColorAndLengthScript colorAndLengthScript;
     private LightColor lightColotScript;
@@ -43,9 +43,9 @@ public class DrawStringScript : MonoBehaviour
     private float CharYLocation = 0f;
 
 
-    struct copySubString 
-    { 
-        public int startIndex; 
+    struct copySubString
+    {
+        public int startIndex;
         public int endIndex;
         public copySubString(int s, int e)
         {
@@ -53,8 +53,8 @@ public class DrawStringScript : MonoBehaviour
             this.endIndex = e;
         }
     };
-    private Stack<copySubString>copySubStringStack = new Stack<copySubString>();
-    private Stack<copySubString>userFunctionSubStringStack = new Stack<copySubString>();
+    private Stack<copySubString> copySubStringStack = new Stack<copySubString>();
+    private Stack<copySubString> userFunctionSubStringStack = new Stack<copySubString>();
 
     Color currentColor;
 
@@ -64,17 +64,13 @@ public class DrawStringScript : MonoBehaviour
     //textOrientation currentTextOrientation = textOrientation.Horizontal;
     //textCirclePlacement currentTextCirclePlacement = textCirclePlacement.Face;
     enum textAlignment { Left, Center, Right }  // Standard text layout rules here
-    enum textOrientation { Horizontal, Vertical}  // Horizontal is normal left-to-right text (word) ordientation. Vertical top-to-bottom "book binding" word orientation 
+    enum textOrientation { Horizontal, Vertical }  // Horizontal is normal left-to-right text (word) ordientation. Vertical top-to-bottom "book binding" word orientation 
     enum textCirclePlacement { Face, Edge, Clock }  // Clock Placement puts text on the face, but text is always up
 
     bool usingShooter = false;
     bool usingTitler = false;
     bool usingDynamicColor = false;
     bool skippingStuffInsideAngleBrackets = false;
-
-    private void Awake()
-    {
-    }
 
     // Start is called before the first frame update
     void Start()
@@ -86,7 +82,7 @@ public class DrawStringScript : MonoBehaviour
         skippingStuffInsideAngleBrackets = false;
         headObject = parentObject = new GameObject("DrawString Parent");
         parentObject.transform.SetParent(this.transform);
-        ProcessDynaDrawCommand(dynaDrawCommands, startIndex: 0, endIndex: dynaDrawCommands.Length - 1);        
+        ProcessDynaDrawCommand(dynaDrawCommands, startIndex: 0, endIndex: dynaDrawCommands.Length - 1);
     }
 
     public void Restart(string newCommands, int caretPosition)
@@ -127,7 +123,7 @@ public class DrawStringScript : MonoBehaviour
                 if (cursorPosition >= 0)
                 {
                     newCursorPositon = cursorPosition;
-                    dynaDrawCommands = dynaDrawCommands.Remove(cursorPosition,1);
+                    dynaDrawCommands = dynaDrawCommands.Remove(cursorPosition, 1);
                     Redraw(newCursorPositon);
                 }
                 break;
@@ -173,7 +169,7 @@ public class DrawStringScript : MonoBehaviour
 
     void ProcessDynaDrawCommand(string dynaDrawString, int startIndex, int endIndex)
     {
-        copySubString currentCopySubString = new copySubString(0,0);
+        copySubString currentCopySubString = new copySubString(0, 0);
         Stack<GameObject> headObjectStack = new Stack<GameObject>();
         copySubString lettersSubstring = new copySubString(-1, -1);
         bool insideQuotes = false;
@@ -197,13 +193,13 @@ public class DrawStringScript : MonoBehaviour
                 string functionDefinition = null;
                 userSelectedOperation = userFunctionSubStringStack.Pop();
                 userSelectedOperation.endIndex = index;
-                
+
                 var lengthOfString = userSelectedOperation.endIndex - userSelectedOperation.startIndex - 1;
-                if (lengthOfString > 0 &&  userFunctionSubStringStack.Count == 0)
+                if (lengthOfString > 0 && userFunctionSubStringStack.Count == 0)
                 {
                     functionDefinition = DoUserCommand(dynaDrawString.Substring(userSelectedOperation.startIndex + 1, lengthOfString));
                 }
-                
+
                 //Only at top level
                 if (userFunctionSubStringStack.Count == 0)
                 {
@@ -213,7 +209,7 @@ public class DrawStringScript : MonoBehaviour
                         ProcessDynaDrawCommand(functionDefinition, startIndex: 0, endIndex: functionDefinition.Length - 1);
                 }
             }
-        
+
             if (dynaDrawCommand == '<' && !insideQuotes)
             {
                 userSelectedOperation.startIndex = userSelectedOperation.endIndex = index;
@@ -257,7 +253,7 @@ public class DrawStringScript : MonoBehaviour
 
             int doThisManyTimes = 1;
             if (userSetRepeatCounterInPlay)
-                doThisManyTimes = Math.Min(repeatCounter, maxMultiplyCount);            
+                doThisManyTimes = Math.Min(repeatCounter, maxMultiplyCount);
             while (doThisManyTimes > 0)
             {
                 switch (dynaDrawCommand)
@@ -363,7 +359,7 @@ public class DrawStringScript : MonoBehaviour
 
             // non-repeatables
             switch (dynaDrawCommand)
-            {                
+            {
                 case 'C':  // Taste the rainbow
                     usingDynamicColor = true;
                     break;
@@ -383,9 +379,9 @@ public class DrawStringScript : MonoBehaviour
                         currentCopySubString = copySubStringStack.Pop();
                         currentCopySubString.endIndex = index;
                     }
-                    break;                          
+                    break;
                 default:
-                    break;                
+                    break;
             }
 
             if (index == (cursorPosition - 1) && !hideCursorPosition)
@@ -442,19 +438,20 @@ public class DrawStringScript : MonoBehaviour
                 return null;
             }
             if (userCommand.ToLower() == "point")
-            { go = Instantiate(pointlight_prefab, headObject.transform);
+            {
+                go = Instantiate(pointlight_prefab, headObject.transform);
                 go.transform.SetParent(headObject.transform);
                 lightColotScript = go.GetComponentInChildren<LightColor>();
                 lightColotScript.SetColor(currentColor, useDynamic: usingDynamicColor);
                 return null;
             }
             if (userCommand.ToLower() == "spot")
-            { 
-            go = Instantiate(spotlight_prefab, headObject.transform);
-            go.transform.SetParent(headObject.transform);
-            lightColotScript = go.GetComponentInChildren<LightColor>();
-            lightColotScript.SetColor(currentColor, useDynamic: usingDynamicColor);         
-            return null;
+            {
+                go = Instantiate(spotlight_prefab, headObject.transform);
+                go.transform.SetParent(headObject.transform);
+                lightColotScript = go.GetComponentInChildren<LightColor>();
+                lightColotScript.SetColor(currentColor, useDynamic: usingDynamicColor);
+                return null;
             }
             if (userCommand.ToLower() == "smoke" || userCommand.ToLower() == "draw")
             {
@@ -485,7 +482,7 @@ public class DrawStringScript : MonoBehaviour
 
         // <Function(X)=asd>  Function Assign
         var functionAssignMatch = Regex.Match(userCommand, @"([A-Za-z][a-z0-9_]*)\((.*)\)=(..*)");
-        if (functionAssignMatch.Success)  
+        if (functionAssignMatch.Success)
         {
             userFuntions[functionAssignMatch.Groups[1].ToString()] = functionAssignMatch.Groups[3].ToString();
             return null;
@@ -501,7 +498,7 @@ public class DrawStringScript : MonoBehaviour
 
         // <Function(1)>  Function Call
         var functionCallMatch = Regex.Match(userCommand, @"([A-Za-z][a-z0-9_]*)\((.*)\)");
-        if (functionCallMatch.Success)  
+        if (functionCallMatch.Success)
         {
             var functionName = functionCallMatch.Groups[1].ToString();
 
@@ -532,15 +529,15 @@ public class DrawStringScript : MonoBehaviour
                 }
             }
             if (functionName.ToLower() == "linetext")
-            {                
-                currentRadius = 0;                
+            {
+                currentRadius = 0;
             }
 
             // function(1)="Xf6r" - all occurances of X are replaced with 1
             string functionDefinition;
 
             if (userFuntions.TryGetValue(functionName, out functionDefinition))
-            {                
+            {
                 return functionDefinition.Replace("X", functionCallMatch.Groups[2].ToString());
             }
         }
@@ -565,30 +562,30 @@ public class DrawStringScript : MonoBehaviour
         {
 
             go = instantiateNewGameObjectHere($"{nextCharater} Rotation", headObject);
-            
+
             go.transform.localRotation = Quaternion.Euler(0f, 0f, -rotation);
 
             //Setup parent with the needed translation (postion) and attach to DynaString Hiearchy/Transform
             var holderParent = instantiateNewGameObjectHere($"{nextCharater} Holder", go);
-            
+
             holderParent.transform.localPosition = position;
-            
+
             var spacing = displayThisLetter(holderParent, nextCharater, rotation);
 
             if (radiasOfArc == 0f)
             {
                 position += new Vector3(spacing, 0, 0);
-                
+
             }
             else
             {
                 position = new Vector3(0, radiasOfArc, 0);
-                
-                rotation += Mathf.Atan(spacing / radiasOfArc) * Mathf.Rad2Deg;
-                
-            }            
 
-            
+                rotation += Mathf.Atan(spacing / radiasOfArc) * Mathf.Rad2Deg;
+
+            }
+
+
         }
         headObject = go;
 
@@ -603,7 +600,7 @@ public class DrawStringScript : MonoBehaviour
         newGameObject.transform.localRotation = Quaternion.identity;
         newGameObject.transform.localPosition = Vector3.zero;
         newGameObject.transform.localScale = Vector3.one;
-        
+
         return newGameObject;
     }
     private GameObject instantiatePrefabHere(GameObject prefab, GameObject parent)
@@ -714,7 +711,7 @@ public class DrawStringScript : MonoBehaviour
 
             letterWidthSpacing = helveticaZoomFactor * (letterToShowPrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size.x + 4f);
 
-        //    letterToShowGameObject.transform.localPosition = new Vector3(-letterWidthSpacing, 0, 0);
+            //    letterToShowGameObject.transform.localPosition = new Vector3(-letterWidthSpacing, 0, 0);
         }
         else
         {
@@ -722,7 +719,7 @@ public class DrawStringScript : MonoBehaviour
             //holderParent.transform.localPosition = new Vector3(12f * helveticaZoomFactor, 0, 0);
             letterWidthSpacing = helveticaZoomFactor * 12f;
         }
-       //// parent.transform.localPosition = new Vector3(letterWidthSpacing, 0, 0);
+        //// parent.transform.localPosition = new Vector3(letterWidthSpacing, 0, 0);
 
         return letterWidthSpacing;
     }
@@ -739,7 +736,7 @@ public class DrawStringScript : MonoBehaviour
         return transform.Find("_Alphabets/" + charLetter).gameObject;
     }
 
-void DisplayTheseHelveticaLetters(string lettersToDisplay)
+    void DisplayTheseHelveticaLetters(string lettersToDisplay)
     {
         CharXLocation = CharYLocation = 0f;
         for (int ctr = 0; ctr <= lettersToDisplay.Length - 1; ctr++)
@@ -776,7 +773,7 @@ void DisplayTheseHelveticaLetters(string lettersToDisplay)
 
                 //Debug.Log(LetterToShow);
 
-                
+
                 var letterHolderGameObject = new GameObject($"{nextCharacter} holder");
                 letterHolderGameObject.transform.SetParent(headObject.transform);
 
@@ -791,7 +788,7 @@ void DisplayTheseHelveticaLetters(string lettersToDisplay)
                 //    go.transform.localScale.z * helveticaZoomFactor);
                 Debug.Log($"x Scale = {go.transform.localScale.x}, y Scale = {go.transform.localScale.y}");
                 Debug.Log($"CharXLocation = {CharXLocation}, CharYLocation = {CharYLocation}");
-              //  go.transform.localPosition = new Vector3(CharXLocation * go.transform.localScale.x, CharYLocation * go.transform.localScale.y, 0);
+                //  go.transform.localPosition = new Vector3(CharXLocation * go.transform.localScale.x, CharYLocation * go.transform.localScale.y, 0);
                 go.transform.localPosition = new Vector3(CharXLocation, CharYLocation, 0);
 
                 headObject = letterHolderGameObject;
@@ -810,13 +807,7 @@ void DisplayTheseHelveticaLetters(string lettersToDisplay)
                 CharXLocation += 8f;
             }
 
-        }   
+        }
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

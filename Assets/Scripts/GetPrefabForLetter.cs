@@ -6,12 +6,6 @@ public class GetPrefabForLetter : MonoBehaviour
 {
     public GameObject[] alphabet;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     public GameObject GetPrefab(char charLetter)
     {
         if (charLetter == ' ')
@@ -23,11 +17,5 @@ public class GetPrefabForLetter : MonoBehaviour
         index = (index > 25) ? 25 : index;
         index = (index < 0) ? 0 : index;
         return alphabet[index];
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

@@ -9,11 +9,6 @@ public class Tilter : MonoBehaviour
     public float speed = 50.0f;
     TilterControls tiltControl;
     Vector2 tilt;
-    
-    void Start()
-    {
-        
-    }
     private void Awake()
     {
         tiltControl = new TilterControls();

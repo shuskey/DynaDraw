@@ -5,12 +5,6 @@ using UnityEngine;
 public class RotateRocketScript : MonoBehaviour
 {
     Vector3 prevPosition = Vector3.zero;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()

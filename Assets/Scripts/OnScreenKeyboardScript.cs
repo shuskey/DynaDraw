@@ -74,10 +74,4 @@ public class OnScreenKeyboardScript : MonoBehaviour
         //Debug.Log("On Screen Key Pressed for " + allKeyDefinitionLines[line][row].Item2);
         inputFieldCommands.SetTextWithoutNotify(drawStringObject.GetComponentInChildren<DrawStringScript>().SendKey(bytaKeyValue));
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
