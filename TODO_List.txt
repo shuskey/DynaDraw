@@ -1,5 +1,6 @@
 BUG FIX / IMPROVE
 [ ] Shooter will shoot backwards at certain angles
+[ ] Cant get Authorization on Get Gallery/Review to work - so its turned off right now
 [ ] Would be nice if shooter cannon balls took on the current color
 [ ] Left/Center/Right Justification, Horiz/Vert Words, Disk Face/Edge/Clock options for text orientation
 [ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue

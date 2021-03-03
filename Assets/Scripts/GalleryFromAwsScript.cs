@@ -9,12 +9,12 @@ public class GalleryFromAwsScript : MonoBehaviour
 {
     public GameObject galleryCardPrefab;
     public GameObject galleryCardPanel;
-    private const string URL = "https://www.photoloom.com/api/gallery";
+    private const string AwsApiGalleryPublishedURL = "https://www.photoloom.com/api/gallery/published";
     private List<DynaDrawGalleryItem> dynaDrawGalleryItemsList;
 
     public void GenerateRequest()
     {
-        StartCoroutine(ProcessRequest(URL));
+        StartCoroutine(ProcessRequest(AwsApiGalleryPublishedURL));
     }
 
     private IEnumerator ProcessRequest(string uri)
