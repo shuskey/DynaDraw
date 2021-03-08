@@ -1,4 +1,4 @@
-﻿Set-Location .\WebGLBuild
+﻿Push-Location .\WebGLBuild
 
 #should see if newer version of instructions are in current directory then copy it to the WebGLBuildDynaDraw directory
 Copy-Item '..\DynaDrawInstructions.pdf' ..\WebGLBuild
@@ -33,3 +33,5 @@ Write-S3Object -BucketName photoloom.com -file .\Build\WebGLBuild.framework.js -
 Write-S3Object -BucketName photoloom.com -file .\Build\WebGLBuild.loader.js -Key dynadraw/Build/WebGLBuild.loader.js
 Write-S3Object -BucketName photoloom.com -file .\Build\WebGLBuild.wasm -Key dynadraw/Build/WebGLBuild.wasm -Metadata $metaDataWasm
 <# no compression #>
+
+Pop-Location

@@ -9,5 +9,7 @@ public class VersionTool : MonoBehaviour
     {
         // This gets the Build Version from Git via the `git describe` command
         PlayerSettings.bundleVersion = Git.BuildVersion;
+
+        Debug.Log($"PlayerSettings Build Version is now {Git.BuildVersion}");
     }
 }

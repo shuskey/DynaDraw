@@ -1,2 +1,1 @@
-﻿Set-Location .\WebGLBuild
-python -m http.server
+﻿python -m http.server --directory .\WebGLBuild
