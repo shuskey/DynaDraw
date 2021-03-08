@@ -20,7 +20,7 @@ Write-S3Object -BucketName photoloom.com -file .\Build\WebGLBuild.data.br -Key d
 Write-S3Object -BucketName photoloom.com -file .\Build\WebGLBuild.framework.js.br -Key dynadraw/Build/WebGLBuild.framework.js.br -Metadata $metaDataJsBr
 Write-S3Object -BucketName photoloom.com -file .\Build\WebGLBuild.loader.js -Key dynadraw/Build/WebGLBuild.loader.js
 Write-S3Object -BucketName photoloom.com -file .\Build\WebGLBuild.wasm.br -Key dynadraw/Build/WebGLBuild.wasm.br -Metadata $metaDataWasm
-#>
+br compression #>
 <# no compression #>
 $metaDataData = @{'content-type' = 'application/octet-stream'}
 #$metaDataData.Add('content-encoding', 'br')
@@ -32,3 +32,4 @@ Write-S3Object -BucketName photoloom.com -file .\Build\WebGLBuild.data -Key dyna
 Write-S3Object -BucketName photoloom.com -file .\Build\WebGLBuild.framework.js -Key dynadraw/Build/WebGLBuild.framework.js -Metadata $metaDataJr
 Write-S3Object -BucketName photoloom.com -file .\Build\WebGLBuild.loader.js -Key dynadraw/Build/WebGLBuild.loader.js
 Write-S3Object -BucketName photoloom.com -file .\Build\WebGLBuild.wasm -Key dynadraw/Build/WebGLBuild.wasm -Metadata $metaDataWasm
+<# no compression #>

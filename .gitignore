@@ -60,6 +60,8 @@ sysinfo.txt
 
 # Builds
 WebGLBuild
+UwpBuild
+WinBuild
 *.apk
 *.unitypackage
 

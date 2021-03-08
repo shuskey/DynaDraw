@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using Assets.Scripts.DataObjects;
 using System.Runtime.InteropServices;
 using UnityEngine.SceneManagement;
+using System.Web;
 
 public class StartUpInitialization : MonoBehaviour
 {
@@ -55,12 +56,13 @@ public class StartUpInitialization : MonoBehaviour
     private string transitionTitle;
     private bool dynaCreationReadytoChange = false;
 
+#if !UNITY_EDITOR && UNITY_WEBGL
     [DllImport("__Internal")]
     private static extern void CopyToClipboard(string str);
 
     [DllImport("__Internal")]
     private static extern void OpenNewTab(string url);
-
+#endif
     enum TagsICareAbout { NoHide, InverseHide, Keyboard }
 
     private void Awake()
@@ -316,14 +318,17 @@ public class StartUpInitialization : MonoBehaviour
         {
             stringToCopy = $"{baseUrl}?dynastring={dynaStringEncoded}&dynatitle={dynaTitleEncoded}";
             stringToCopy += $"&scene={dynaSceneNameEncoded}&view={dynaFieldOfViewEncoded}&speed={dynaSpeedEncoded}";
-            CopyToClipboard(stringToCopy);
+
 #if !UNITY_EDITOR && UNITY_WEBGL
+            CopyToClipboard(stringToCopy);
             OpenNewTab(stringToCopy);
 #endif
         }
         else
         {
+#if !UNITY_EDITOR && UNITY_WEBGL
             GUIUtility.systemCopyBuffer = stringToCopy;
+#endif
         }
     }
 
@@ -450,17 +455,18 @@ public class StartUpInitialization : MonoBehaviour
         var webglUrl = Application.absoluteURL;
         if (!string.IsNullOrEmpty(webglUrl))
         {
+#if !UNITY_EDITOR && UNITY_WEBGL
             var myUri = new System.Uri(webglUrl);
             var portUrlInt = myUri.Port;
             var portUrlString = "";
             if (portUrlInt != 80)
                 portUrlString = $":{portUrlInt}";
             baseUrl = $"{myUri.Scheme}://{myUri.Host}{portUrlString}{myUri.LocalPath}";
-            var dynastring = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("dynastring");
-            var dynatitle = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("dynatitle");
-            var dynascene = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("scene");
-            var dynaview = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("view");
-            var dynaspeed = System.Web.HttpUtility.ParseQueryString(myUri.Query).Get("speed");
+            var dynastring = HttpUtility.ParseQueryString(myUri.Query).Get("dynastring");
+            var dynatitle = HttpUtility.ParseQueryString(myUri.Query).Get("dynatitle");
+            var dynascene = HttpUtility.ParseQueryString(myUri.Query).Get("scene");
+            var dynaview = HttpUtility.ParseQueryString(myUri.Query).Get("view");
+            var dynaspeed = HttpUtility.ParseQueryString(myUri.Query).Get("speed");
 
             if (!string.IsNullOrEmpty(dynascene))
                 firstScene = sceneDefinitionPresets.getSpecific(dynascene);
@@ -483,6 +489,7 @@ public class StartUpInitialization : MonoBehaviour
             title = inputFieldTitle.text = dynatitle;
             subtitle = "Shared with you from a friend.";
             drawStringScript.SetDynaString(dynastring);
+#endif
         }
         else
         {
