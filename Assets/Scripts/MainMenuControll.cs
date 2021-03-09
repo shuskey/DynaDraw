@@ -35,10 +35,30 @@ public class MainMenuControll : MonoBehaviour
         Application.Quit();
     }
 
+    bool toggleEveryOther = true;
+
     public void Login()
     {
-        var LoginURL = "https://dynadraw.auth.us-west-2.amazoncognito.com/login?client_id=582fu0d2ul1dj8osvtlirvd9rd&response_type=code&scope=email+openid&redirect_uri=https://photoloom.com/dynadraw/index.html";
-        Application.OpenURL(LoginURL);
+        //#if !UNITY_EDITOR && UNITY_WEBGL
+        var webglUrl = Application.absoluteURL;
+        if (!string.IsNullOrEmpty(webglUrl))
+        {
+            var myUri = new System.Uri(webglUrl);
+            var portUrlInt = myUri.Port;
+            var portUrlString = "";
+            if (portUrlInt != 80 && portUrlInt != 443)
+                portUrlString = $":{portUrlInt}";
+            var folderString = "";
+            if (myUri.Host == "photoloom.com")
+                folderString = "dynadraw/";
+            var baseUrl = $"{myUri.Scheme}://{myUri.Host}{portUrlString}/{folderString}index.html";
+            var LoginURL = "https://dynadraw.auth.us-west-2.amazoncognito.com/login?client_id=582fu0d2ul1dj8osvtlirvd9rd&response_type=code&scope=email+openid&redirect_uri=" + $"{baseUrl}";
+            Debug.Log("Login Button will launch:");
+            Debug.Log(LoginURL);
+            toggleEveryOther  = !toggleEveryOther;
+            if (toggleEveryOther)
+                Application.OpenURL(LoginURL);
+        }
     }
 
     private void Awake()
