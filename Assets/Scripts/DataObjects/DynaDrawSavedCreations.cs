@@ -70,13 +70,13 @@ namespace Assets.Scripts.DataObjects
                 }
                 UserSaveComments = stuffFromFile.UserSaveComments;
                 UserSaveCreationsList = stuffFromFile.UserSaveCreationsList;
-        }
+            }
             catch
             {
                 Debug.Log($"Could not find or process file at {Application.persistentDataPath}/{saveFileName}, will start with notfound item.");
                 UserSaveComments = "Your own creation";
                 UserSaveCreationsList = new List<DynaDrawSavedItem>() { new DynaDrawSavedItem("Sample", "", "Rf6rf6rf6rf", "", "", "") };
-}
+            }
         }
     }
 }

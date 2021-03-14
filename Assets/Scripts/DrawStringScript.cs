@@ -786,8 +786,8 @@ public class DrawStringScript : MonoBehaviour
                 //go.transform.localScale = new Vector3(go.transform.localScale.x * helveticaZoomFactor,
                 //    go.transform.localScale.y * helveticaZoomFactor,
                 //    go.transform.localScale.z * helveticaZoomFactor);
-                Debug.Log($"x Scale = {go.transform.localScale.x}, y Scale = {go.transform.localScale.y}");
-                Debug.Log($"CharXLocation = {CharXLocation}, CharYLocation = {CharYLocation}");
+                //Debug.Log($"x Scale = {go.transform.localScale.x}, y Scale = {go.transform.localScale.y}");
+                //Debug.Log($"CharXLocation = {CharXLocation}, CharYLocation = {CharYLocation}");
                 //  go.transform.localPosition = new Vector3(CharXLocation * go.transform.localScale.x, CharYLocation * go.transform.localScale.y, 0);
                 go.transform.localPosition = new Vector3(CharXLocation, CharYLocation, 0);
 

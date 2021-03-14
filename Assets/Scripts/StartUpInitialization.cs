@@ -455,7 +455,7 @@ public class StartUpInitialization : MonoBehaviour
         var webglUrl = Application.absoluteURL;
         if (!string.IsNullOrEmpty(webglUrl))
         {
-#if !UNITY_EDITOR && UNITY_WEBGL
+//#if !UNITY_EDITOR && UNITY_WEBGL
             var myUri = new System.Uri(webglUrl);
             var portUrlInt = myUri.Port;
             var portUrlString = "";
@@ -489,7 +489,7 @@ public class StartUpInitialization : MonoBehaviour
             title = inputFieldTitle.text = dynatitle;
             subtitle = "Shared with you from a friend.";
             drawStringScript.SetDynaString(dynastring);
-#endif
+//#endif
         }
         else
         {
