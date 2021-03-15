@@ -11,6 +11,8 @@ public class MainMenuControll : MonoBehaviour
     public GameObject quitButton;
 
     private AwsCognitoApiScript awsCognitoApiScript;
+
+    private string baseUrl;
    
     public void Home()
     {
@@ -48,25 +50,13 @@ public class MainMenuControll : MonoBehaviour
         var webglUrl = Application.absoluteURL;
         if (!string.IsNullOrEmpty(webglUrl))
         {
-            var myUri = new System.Uri(webglUrl);
-            var portUrlInt = myUri.Port;
-            var portUrlString = "";
-            if (portUrlInt != 80 && portUrlInt != 443)
-                portUrlString = $":{portUrlInt}";
-            var folderString = "";
-            if (myUri.Host == "photoloom.com")
-                folderString = "dynadraw/";
-            var baseUrl = $"{myUri.Scheme}://{myUri.Host}{portUrlString}/{folderString}index.html";
-
             if (loginLogoutButton.GetComponentInChildren<Text>().text == "Logout")
             {
-                awsCognitoApiScript.cognitoLogout();
-                Application.OpenURL(baseUrl);
+                awsCognitoApiScript.cognitoLogout(baseUrl, restartApp: true);              
             }
             else
             {
-                var loginUrl = "https://dynadraw.auth.us-west-2.amazoncognito.com/login?client_id=582fu0d2ul1dj8osvtlirvd9rd&response_type=code&scope=email+openid&redirect_uri=" + $"{baseUrl}";
-                Application.OpenURL(loginUrl);
+                awsCognitoApiScript.cognitoLogin(baseUrl);
             }
 
             // What happens next is that the Congito App Client Settings for the DynaDraw client will call back to us with a code parameter passed in
@@ -74,6 +64,19 @@ public class MainMenuControll : MonoBehaviour
         }
         
         //#endif
+    }
+    private void GetBaseUrl(string webglUrl)
+    {
+        var myUri = new System.Uri(webglUrl);
+        var portUrlInt = myUri.Port;
+        var portUrlString = "";
+        if (portUrlInt != 80 && portUrlInt != 443)
+            portUrlString = $":{portUrlInt}";
+        var folderString = "";
+        if (myUri.Host == "photoloom.com")
+            folderString = "dynadraw/";
+
+        baseUrl = $"{myUri.Scheme}://{myUri.Host}{portUrlString}/{folderString}index.html";
     }
 
     private void Awake()
@@ -85,6 +88,9 @@ public class MainMenuControll : MonoBehaviour
         var webglUrl = Application.absoluteURL;
         if (string.IsNullOrEmpty(webglUrl))
             return;
+
+        GetBaseUrl(webglUrl);
+
         quitButton.SetActive(false);  // no Quit button in WebGL version
 
         var myUri = new System.Uri(webglUrl);
@@ -116,7 +122,7 @@ public class MainMenuControll : MonoBehaviour
         var webglUrl = Application.absoluteURL;
         if (string.IsNullOrEmpty(webglUrl))
         {
-            awsCognitoApiScript.cognitoLogout();
+            awsCognitoApiScript.cognitoLogout(baseUrl, restartApp: false);
             return;
         }
             
@@ -133,17 +139,11 @@ public class MainMenuControll : MonoBehaviour
 
         if (!string.IsNullOrEmpty(cognitoCode))
         {
-            var portUrlInt = myUri.Port;
-            var portUrlString = "";
-            if (portUrlInt != 80)
-                portUrlString = $":{portUrlInt}";
-            var baseUrl = $"{myUri.Scheme}://{myUri.Host}{portUrlString}{myUri.LocalPath}";
-            
             StartCoroutine(awsCognitoApiScript.getCognitoTokensFromCode(cognitoCode, baseUrl));
         }
         else
         {
-            awsCognitoApiScript.cognitoLogout();
+            awsCognitoApiScript.cognitoLogout(baseUrl, restartApp: false);
         }
 
         //#endif
