@@ -2189,6 +2189,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4221969056459106411, guid: 7c782d196704db942ac1c0497ab7e038,
         type: 3}
+      propertyPath: quitButton
+      value: 
+      objectReference: {fileID: 1559356975}
+    - target: {fileID: 4221969056459106411, guid: 7c782d196704db942ac1c0497ab7e038,
+        type: 3}
       propertyPath: loginLogoutButton
       value: 
       objectReference: {fileID: 1997260413}
