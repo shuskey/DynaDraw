@@ -14,7 +14,7 @@ namespace Assets.Scripts.DataObjects
         }
         public string ClientSecret
         {
-            get { return "yourclientsecretgoeshere"; }
+            get { return "WHAT WHATyourclientsecretgoeshere"; }
             set { }
         }
         public string AwsCognitoTokensURL
