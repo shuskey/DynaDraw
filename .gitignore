@@ -67,4 +67,4 @@ WinBuild
 
 # Crashlytics generated file
 crashlytics-build.properties
-.\Assets\Scripts\AwsCognitoApiScript.cs
+.\Assets\Scripts\DataObjects\AWSSECRETS.cs
