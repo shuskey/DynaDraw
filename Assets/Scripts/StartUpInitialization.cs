@@ -28,6 +28,8 @@ public class StartUpInitialization : MonoBehaviour
     public Button helpButton;
     public string instructionsUrl;
     public Button shareButton;
+    public SaveToAWSGalleryReview saveToAWSGalleryReview;
+    public Button publishButton;
     public Slider speedSlider;
     public Slider fieldOfViewSlider;
     public Toggle showKeyboardToggle;
@@ -56,7 +58,7 @@ public class StartUpInitialization : MonoBehaviour
     private string transitionTitle;
     private bool dynaCreationReadytoChange = false;
 
-#if !UNITY_EDITOR && UNITY_WEBGL
+#if UNITY_WEBGL
     [DllImport("__Internal")]
     private static extern void CopyToClipboard(string str);
 
@@ -86,6 +88,7 @@ public class StartUpInitialization : MonoBehaviour
         pauseButton.onClick.AddListener(delegate { PauseButtonClicked(); });
         changeSceneButton.onClick.AddListener(delegate { ChangeSceneButtonClicked(); });
         shareButton.onClick.AddListener(delegate { ShareButtonClicked(); });
+        publishButton.onClick.AddListener(delegate { PublishButtonClicked(); });
         helpButton.onClick.AddListener(delegate { HelpButtonClicked(); });
         dropdown.onValueChanged.AddListener(delegate { DropDownValueChanged(dropdown.value); });
         previousCreationButton.onClick.AddListener(delegate { DropDownValueIncrement(-1); });
@@ -297,12 +300,22 @@ public class StartUpInitialization : MonoBehaviour
 
     void HelpButtonClicked()
     {
-#if !UNITY_EDITOR && UNITY_WEBGL
+#if UNITY_WEBGL
         OpenNewTab(instructionsUrl);
 #else
         Application.OpenURL(instructionsUrl);
 #endif
      }
+
+    void PublishButtonClicked()
+    {  
+        var title = "Auto Generated Title";
+        if (inputFieldTitle.text.Length != 0)
+            title = inputFieldTitle.text;
+        DynaDrawSavedItem itemToSendForReview = new DynaDrawSavedItem( title, subtitle: "Your own creation", inputFieldCommands.text, sceneName: currentSceneName, 
+            fieldOfView: mainCamera.fieldOfView.ToString(), timeScale: Time.timeScale.ToString());        
+        saveToAWSGalleryReview.GenerateRequest(itemToSendForReview);
+    }
 
     void ShareButtonClicked()
     {
@@ -319,14 +332,14 @@ public class StartUpInitialization : MonoBehaviour
             stringToCopy = $"{baseUrl}?dynastring={dynaStringEncoded}&dynatitle={dynaTitleEncoded}";
             stringToCopy += $"&scene={dynaSceneNameEncoded}&view={dynaFieldOfViewEncoded}&speed={dynaSpeedEncoded}";
 
-#if !UNITY_EDITOR && UNITY_WEBGL
+#if UNITY_WEBGL
             CopyToClipboard(stringToCopy);
             OpenNewTab(stringToCopy);
 #endif
         }
         else
         {
-#if !UNITY_EDITOR && UNITY_WEBGL
+#if UNITY_WEBGL
             GUIUtility.systemCopyBuffer = stringToCopy;
 #endif
         }
@@ -455,7 +468,7 @@ public class StartUpInitialization : MonoBehaviour
         var webglUrl = Application.absoluteURL;
         if (!string.IsNullOrEmpty(webglUrl))
         {
-//#if !UNITY_EDITOR && UNITY_WEBGL
+#if UNITY_WEBGL
             var myUri = new System.Uri(webglUrl);
             var portUrlInt = myUri.Port;
             var portUrlString = "";
@@ -489,7 +502,7 @@ public class StartUpInitialization : MonoBehaviour
             title = inputFieldTitle.text = dynatitle;
             subtitle = "Shared with you from a friend.";
             drawStringScript.SetDynaString(dynastring);
-//#endif
+#endif
         }
         else
         {

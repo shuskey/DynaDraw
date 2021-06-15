@@ -6,10 +6,11 @@ public class QuitButtonVisibilityScript : MonoBehaviour
 {
 
     void Awake()
-    {
-        gameObject.SetActive(true);
-#if !UNITY_EDITOR && UNITY_WEBGL
+    {     
+#if UNITY_WEBGL
         gameObject.SetActive(false);
+#else
+        gameObject.SetActive(true);
 #endif
     }
 

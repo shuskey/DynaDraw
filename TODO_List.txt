@@ -4,16 +4,38 @@ BUG FIX / IMPROVE
 [ ] Left/Center/Right Justification, Horiz/Vert Words, Disk Face/Edge/Clock options for text orientation
 [ ] Jet Rotation follow directional Vector - Fix the Y axis Flip issue
 [ ] Allow a Shooter to be applied to the Rocket
+[ ] why is www.photoloom.com api queries (like list published) cached - I do not seen new adds
+[ ] move instructions button to a green circle "i" button
+[ ] move share and new "publish to gallery" button to a "box with arrow' - iPhone style share icon
+    [ ] When pressed the use gets the option to choose - "share URL" or publish to gallery
 
 New Features - Higher Priority:
-[ ] Post to be reiviewed, add "Publish" button on Edit Page for potential Publishing (may ask for additional details Text/image)
+-->>[ ] Post to be reiviewed, add "Publish to Gallery" button on Edit Page for potential Publishing (may ask for additional details Text/image)
+    Only allowed if you are logged in.  A record gets created in the dynadraw-gallery table via the Api Gateway/Lambda "/api/gallery/review - POST" call
+
 [ ] continue as Guest, login/signup (just need unique/verified email)
-    [ ] Webgl
-	[ ] UWP - cognito login how??
-[ ] Use/setup Authentication to enforce business rules
-    [ ] Anyone can get/read Published Gallery Items
-	[ ] Only logged in users can add (Post) to be Reviewed Gallery Items
-	[ ] Only Admin can read Review Gallery Items
+    [X] Webgl  [ ] Apply the below learnings back into the WebGL version
+    [X] Create Serverless for DynaDraw table/APIs  - Modify the Pets Sample code - Commited as DynaDraw-Gallery in GitHub
+        [X] make this deploy to my custom domain - see https://www.serverless.com/blog/serverless-api-gateway-domain
+    [ ] UWP - cognito login how?? - Incorporate sample code back into Unity App - look for Unity Resources in the Unity Store - perhaps https://assetstore.unity.com/packages/tools/network/login-module-16120#releases	
+	    [X] Sample code working - fixed backend cofiguration issues
+	    [/] Need UWP AWS .Net Sdk working to get Auth token for logged in user and pass this along with API Post call
+            [X] Work with AWS .Net congnito sample to get:
+                [X] Maybe get their S3 example working
+                [X] Find examples of Cognito "rolls" being used to protect API calls / Dynamo operations
+                [ ] Need to get POST Review api authentication restriction working in UWP Code
+				[X] Make sure Admin calls Get Review Put/Update Gallery item to publish it (See below Acceptance Criteria)
+				    [X] Need to be able to make distinction between Admin and Member users
+        
+		
+		[XX  Question  ] how to get Cognito_DynaDraw_UserRole by default for PhotoloomPool UserPools?? - [Answer -  Well - we will let these just authenticate with no roll/group]
+		[XX  Question  ] how to enable Role base Authorization - OR do I have it with the policies attached to the roles??  ===> Lambda Authorizer is the ANSWER [Answer - add Admins to cognito group, use Lamba custom authorizer] 
+		[XX  QUESTION  ] How to get my lambda python code with import 'from jose import jwk, jwt' to work??? [Answer - Serverless is the answer]
+		     
+[ ] Acceptance Criteria: Use/setup Authentication to enforce business rules
+    [X] Anyone can get/read Published Gallery Items - Auth None
+	[X] Only logged in users can add (Post) to be Reviewed Gallery Items - serverless custom Lambda Authorizer
+	[X] Only Admin can read Review Gallery Items - serverless custom Lambda Authorizer
 	[ ] Only Admin can update Gallery Items - 
 	    for example update a Review to a Published Items (add additional text/iamge fields)
 		or Review to a Trash item
@@ -39,9 +61,10 @@ New Features - Higher Priority:
 	
 [ ] SHOOT EM UP - Objects in drawing are targets for cannon balls
    - Objects Explode
-   - Objects Disconnect and gravity and velocity/snip take over
+   - Objects Disconnect and gravity and velocity take over
    - Shoot/explode sounds
    - Score/timed?
+   - Theme Music
 
     ======
 [ ] Code cleanup
@@ -177,3 +200,21 @@ Depricated:
 		  
 		  Move()
 		  Move().Length(Trigger)
+		  
+		  
+Spruce up list
+Running in editor mode:
+ X Make the main menu buttons look cool again - perhaps like the Logout/Quit buttons
+ - Login brings up a Dialog Box for Credentials - what is it doing now?
+ - Music on Credits Screen
+ X Hello Guest & Login Button need to be layed out side by side on "ClassicDraw" & "Gallery"  {Login} Hello Guest
+ [n/a] Quit Button does not belong on "Editor Mode" run.
+ - Get Publish to work:
+ UnityEngine.EventSystems.ExecuteEvents.Execute[T] (UnityEngine.GameObject target, UnityEngine.EventSystems.BaseEventData eventData, UnityEngine.EventSystems.ExecuteEvents+EventFunction`1[T1] functor) (at Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/ExecuteEvents.cs:272)
+UnityEngine.EventSystems.EventSystem:Update() (at Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/EventSystem.cs:501)
+
+Test in WebGL Mode
+
+Test in Universal Windows Platform mode
+ 
+ 

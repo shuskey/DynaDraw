@@ -1,64 +1,118 @@
+using Amazon;
+using Amazon.CognitoIdentity;
+using Amazon.Runtime;
+using Amazon.CognitoIdentityProvider;
+using Amazon.Extensions.CognitoAuthentication;
+using Amazon.CognitoIdentityProvider.Model;
+using Amazon.IdentityStore;
 using Assets.Scripts.DataObjects;
 using Newtonsoft.Json;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 public class AwsCognitoApiScript : MonoBehaviour
 {
+    public static AwsCognitoApiScript _Instance;
     public AwsCognitoTokensResponse aws_tokens;
-    public GameObject helloGuestOrLoggedInMember;
-    public GameObject loginLogoutButton;
 
     public AWSSECRETS AwsSecrets = new AWSSECRETS();
-
-    private bool everyOther = true;
 
     void Awake()
     {
         DontDestroyOnLoad(this);
+        if (_Instance == null)
+        {
+            _Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         aws_tokens = new AwsCognitoTokensResponse();
-        aws_tokens.GetFromJson();
+        GetTokensFromJson();
     }
 
-    public void cognitoLogout(string baseUrl, bool restartApp = true)
+    public AwsCognitoTokensResponse GetTokensFromJson()
+    {
+        aws_tokens.GetFromJson();
+        return aws_tokens;
+    }
+
+    public AwsCognitoTokensResponse CognitoLogout()
     {
         aws_tokens.id_token =
             aws_tokens.access_token =
             aws_tokens.refresh_token =
-            aws_tokens.cognito_code = "logged out";
-        aws_tokens.SaveIntoJson();
-        helloGuestOrLoggedInMember.GetComponentInChildren<Text>().text = "Hello Guest";
-        loginLogoutButton.GetComponentInChildren<Text>().text = "Login";
-        if (restartApp)
-            Application.OpenURL(baseUrl);
+            aws_tokens.cognito_code = "";
+        return aws_tokens;
     }
 
-    public void cognitoLogin(string baseUrl)
+    public async Task<AwsCognitoTokensResponse> CognitoLoginAsync_forStandAlone(string baseUrl)
     {
-        everyOther = !everyOther;
-        if (everyOther)
-        {
-            Application.OpenURL(string.Format(AwsSecrets.AwsCognitoLoginURL, AwsSecrets.ClientId, baseUrl));
-        }
-        else
-        {
-            Debug.Log($"AwsCognitoURL: {AwsSecrets.AwsCognitoLoginURL}, ClientId: {AwsSecrets.ClientId}, baseUrl: {baseUrl}");
-            Debug.Log($"Login will try to launch this URL: {string.Format(AwsSecrets.AwsCognitoLoginURL, AwsSecrets.ClientId, baseUrl)}");
-        }
+        Debug.Log("Now in CognitoLoginAsync_forWebGL function");
+        if (await AuthenticateWithSrpAsync())
+            Debug.Log("Login successful");
+
+        return aws_tokens;
     }
 
-    public void showLoggedInMember()
+    public AwsCognitoTokensResponse CognitoLogin_forWebGL(string baseUrl)
     {
-        helloGuestOrLoggedInMember.GetComponentInChildren<Text>().text = "Hello Member " +
-            aws_tokens.cognito_code.Substring(0, 10);
-        loginLogoutButton.GetComponentInChildren<Text>().text = "Logout";
+        var urlToOpen = string.Format(AwsSecrets.AwsCognitoLoginURL, AwsSecrets.ClientId, baseUrl);
+        Debug.Log("Using this URL to Login: " + urlToOpen);
+        Application.OpenURL(urlToOpen);
+        // External cognito web page will display the login form, then re-launch our page with parameters passed
+        // indicating the result of the login
+        // See MainMenuController.cs Start() function which calls back to GetCognitoTokensFromCode() in this file
+
+        // I am pretty sure this function never get this far because of the above OpenURL
+        return aws_tokens;
+    }
+
+    public async Task<bool> AuthenticateWithSrpAsync()
+    {
+        // Initialize the Amazon Cognito credentials provider
+        //    CognitoAWSCredentials credentials = new CognitoAWSCredentials(
+        //        AwsSecrets.AwsIdentityPoolId, RegionEndpoint.USWest2);
+        //var identityId = credentials.GetIdentityId();
+        var CLIENTAPP_ID = "4tta86ma8oudh0o30ns4hteha7";
+        var POOL_ID = "us-west-2_2KFggV1Xy";
+
+        var username = "scott+1@photoloom.com";
+        var password = "Password1!";
+
+        AmazonCognitoIdentityProviderClient provider = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials(), RegionEndpoint.USWest2);
+        CognitoUserPool userPool = new CognitoUserPool(POOL_ID, CLIENTAPP_ID, provider);
+
+        CognitoUser user = new CognitoUser(username, CLIENTAPP_ID, userPool, provider);
+        InitiateSrpAuthRequest authRequest = new InitiateSrpAuthRequest()
+        {
+            Password = password
+        };
+
+        AuthFlowResponse authResponse = await user.StartWithSrpAuthAsync(authRequest).ConfigureAwait(false);
+        if (authResponse.AuthenticationResult != null)
+        {
+            var usersAccessToken = authResponse.AuthenticationResult.AccessToken;
+            aws_tokens.id_token = authResponse.AuthenticationResult.IdToken;
+            aws_tokens.access_token = authResponse.AuthenticationResult.AccessToken;
+            aws_tokens.refresh_token = authResponse.AuthenticationResult.RefreshToken;
+            aws_tokens.cognito_code = user.Username;    
+            return true;
+        }
+        else return false;  
     }
 
     private string Base64ClientIdClientSecret() => "Basic " + System.Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", AwsSecrets.ClientId, AwsSecrets.ClientSecret)));
      
-    public IEnumerator getCognitoTokensFromCode(string code, string baseUrl)
+    public IEnumerator GetCognitoTokensFromCode(string code, string baseUrl)
     {
         // We may have received a browser refresh and allready have
         // asked for these tokens from aws
@@ -90,6 +144,5 @@ public class AwsCognitoApiScript : MonoBehaviour
             }
             aws_tokens.SaveIntoJson();
         }
-        showLoggedInMember();
     }
 }
