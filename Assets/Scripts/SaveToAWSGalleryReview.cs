@@ -20,6 +20,8 @@ public class SaveToAWSGalleryReview : MonoBehaviour
 
     private IEnumerator ProcessRequest(string uri, string payload)
     {
+        Debug.Log("SaveToAWSGalleryReview ProcessRequest to uri= " + uri);
+        Debug.Log("Payload= " + payload);
         aws_tokens = awsCognitoApiScript.GetTokensFromJson();
 
         UnityWebRequest request = UnityWebRequest.Put(uri, payload);

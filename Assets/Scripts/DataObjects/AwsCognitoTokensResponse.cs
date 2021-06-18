@@ -21,12 +21,15 @@ namespace Assets.Scripts.DataObjects
         public void SaveIntoJson()
         {
             string saveDataJson = JsonConvert.SerializeObject(this);
+            Debug.Log("SaveIntoJson now will save this saveDataJson = " + saveDataJson);
             PlayerPrefs.SetString(playerPreferenceKey, saveDataJson);
             Debug.Log($"Aws Credentials for code={cognito_code}, saved to {Application.persistentDataPath}/{playerPreferenceKey}");
         }
 
         public void GetFromJson()
         {
+            Debug.Log("Now inside GetFromJson");
+
             try
             {
                 var saveDataJson = PlayerPrefs.GetString(playerPreferenceKey);

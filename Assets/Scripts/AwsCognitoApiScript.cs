@@ -26,6 +26,7 @@ public class AwsCognitoApiScript : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("Starting AwsCognitoApiScript Awake function");
         DontDestroyOnLoad(this);
         if (_Instance == null)
         {
@@ -119,6 +120,8 @@ public class AwsCognitoApiScript : MonoBehaviour
         if (aws_tokens.cognito_code != code)
         {
             aws_tokens.cognito_code = code;
+
+            Debug.Log("Now in GetCognitoTokensFromCode code = " + code + ", baseUrl= " + baseUrl);
             var uri = string.Format(AwsSecrets.AwsCognitoTokensURL, code, AwsSecrets.ClientId, baseUrl);
             string body = "";
             UnityWebRequest request = UnityWebRequest.Post(uri, body);
@@ -136,7 +139,9 @@ public class AwsCognitoApiScript : MonoBehaviour
             }
             else
             {
+                Debug.Log("Did not get a Connection Error, nor a Protocol Error from AWS call");
                 var resultText = request.downloadHandler.text;
+                Debug.Log("resultText = " + resultText);
                 var awsCognitoTokens = JsonConvert.DeserializeObject<AwsCognitoTokensResponse>(resultText);
                 aws_tokens.id_token = awsCognitoTokens.id_token;
                 aws_tokens.access_token = awsCognitoTokens.access_token;

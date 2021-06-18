@@ -1,4 +1,5 @@
 using Assets.Scripts.DataObjects;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Web;
 using UnityEngine;
@@ -76,6 +77,7 @@ public class MainMenuControll : MonoBehaviour
 
         if (loginLogoutButton.GetComponentInChildren<Text>().text == "Logout")
         {
+            Debug.Log("Logout pressed by user");
             aws_tokens = awsCognitoApiScript.CognitoLogout();
             ShowLoggedIn(aws_tokens);
             if (baseUrl != "")
@@ -83,6 +85,7 @@ public class MainMenuControll : MonoBehaviour
         }
         else
         {
+            Debug.Log("Login pressed by user");
             aws_tokens = awsCognitoApiScript.CognitoLogin_forWebGL(baseUrl);
             ShowLoggedIn(aws_tokens);
         }
@@ -112,11 +115,6 @@ public class MainMenuControll : MonoBehaviour
         loginLogoutButton.GetComponentInChildren<Text>().text = loggedin ? "Logout" : "Login";
     }
 
-    public void GetAwsTokensFromJsonAndShowLoggedIn()
-    {
-
-    }
-
     private void GetBaseUrl(string webglUrl)
     {
         var myUri = new System.Uri(webglUrl);
@@ -133,11 +131,13 @@ public class MainMenuControll : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("Starting MainMenuController Awake function");
+
         awsCognitoApiScript = AwsCognitoApiScript._Instance;
 
-        AwsCognitoTokensResponse aws_tokens = new AwsCognitoTokensResponse();
-        aws_tokens.GetFromJson();
-        ShowLoggedIn(aws_tokens);
+        //AwsCognitoTokensResponse aws_tokens = new AwsCognitoTokensResponse();
+        //aws_tokens.GetFromJson();
+        //ShowLoggedIn(aws_tokens);
 
         if (SceneManager.GetActiveScene().buildIndex != 0)
             return;
@@ -202,10 +202,11 @@ public class MainMenuControll : MonoBehaviour
             Debug.Log("No cognitoCode passed in the URL");
             awsCognitoApiScript.CognitoLogout();
         }
-        var aws_tokens = awsCognitoApiScript.GetTokensFromJson();
-        Debug.Log("aws_tokens=" + aws_tokens);
-        ShowLoggedIn(aws_tokens);
 
+        // May not need the following GetTokensFromJson because it is done in AwsCognitoApiScript Awak()
+        var aws_tokens = awsCognitoApiScript.GetTokensFromJson();
+        Debug.Log("aws_tokens=" + JsonConvert.SerializeObject(aws_tokens));
+        ShowLoggedIn(aws_tokens);
 #endif
 
     }
