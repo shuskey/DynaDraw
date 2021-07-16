@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 public class AwsCognitoApiScript : MonoBehaviour
 {
@@ -37,6 +38,7 @@ public class AwsCognitoApiScript : MonoBehaviour
             Destroy(gameObject);
         }
         aws_tokens = new AwsCognitoTokensResponse();
+        Debug.Log("Calling GetTokensFromJason in AwsCognitoApiScript Awake function");
         GetTokensFromJson();
     }
 
@@ -52,6 +54,7 @@ public class AwsCognitoApiScript : MonoBehaviour
             aws_tokens.access_token =
             aws_tokens.refresh_token =
             aws_tokens.cognito_code = "";
+        aws_tokens.SaveIntoJson();
         return aws_tokens;
     }
 
@@ -74,6 +77,7 @@ public class AwsCognitoApiScript : MonoBehaviour
         // See MainMenuController.cs Start() function which calls back to GetCognitoTokensFromCode() in this file
 
         // I am pretty sure this function never get this far because of the above OpenURL
+        // We need to Exit here
         return aws_tokens;
     }
 
@@ -147,6 +151,7 @@ public class AwsCognitoApiScript : MonoBehaviour
                 aws_tokens.access_token = awsCognitoTokens.access_token;
                 aws_tokens.refresh_token = awsCognitoTokens.refresh_token;
             }
+            Debug.Log("Calling SaveIntoJson in AwsCognitoApiScript GetCognitoTokensFromCode function");
             aws_tokens.SaveIntoJson();
         }
     }

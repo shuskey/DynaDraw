@@ -22,6 +22,7 @@ public class SaveToAWSGalleryReview : MonoBehaviour
     {
         Debug.Log("SaveToAWSGalleryReview ProcessRequest to uri= " + uri);
         Debug.Log("Payload= " + payload);
+        Debug.Log("Calling GetTokensFromJason in SaveToAWSGalleryReview ProcessRequest function");
         aws_tokens = awsCognitoApiScript.GetTokensFromJson();
 
         UnityWebRequest request = UnityWebRequest.Put(uri, payload);

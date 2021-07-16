@@ -170,6 +170,10 @@ Depricated:
     I Tried and failed - Unity InputField limitations
 	
 ----
+
+How about a multi-line program editor which also includes auto complete
+
+---
 	
 [ ] Higher level language construct - Single Letters are a bit limiting
 	 - Allow for Trigger/Modifier/Thing/Action
@@ -200,21 +204,45 @@ Depricated:
 		  
 		  Move()
 		  Move().Length(Trigger)
-		  
-		  
+		  		  
 Spruce up list
 Running in editor mode:
  X Make the main menu buttons look cool again - perhaps like the Logout/Quit buttons
  - Login brings up a Dialog Box for Credentials - what is it doing now?
  - Music on Credits Screen
  X Hello Guest & Login Button need to be layed out side by side on "ClassicDraw" & "Gallery"  {Login} Hello Guest
- [n/a] Quit Button does not belong on "Editor Mode" run.
+ 
  - Get Publish to work:
  UnityEngine.EventSystems.ExecuteEvents.Execute[T] (UnityEngine.GameObject target, UnityEngine.EventSystems.BaseEventData eventData, UnityEngine.EventSystems.ExecuteEvents+EventFunction`1[T1] functor) (at Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/ExecuteEvents.cs:272)
 UnityEngine.EventSystems.EventSystem:Update() (at Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/EventSystem.cs:501)
 
-Test in WebGL Mode
+Test in WebGL Mode...
+FIX: 
+#IF at login routine?
+X  Quit Button does not belong on "Editor Mode" run, nor WEBGL
+X  Redirect to https://photoloom.com/dynadraw/index.html?code=4dc54dea-5632-40ed-978a-cefb50c38926
+   After login (via web service) does not work, in web console output:
+   Aws Credentials for code=, retrieved from /idbfs/1d8c9a6596ffdf7547009a9d840885f0/DynaDrawCredentials
+X Login button on Draw and Gallery Screen does nothing
 
-Test in Universal Windows Platform mode
+
+--
+WebGL:
+(Done) Logout needs to eliminate the "?code=d61d8e83-fca1-4f45-ab98-69c2ca2d3984" from the url
+(Fixed) Login not working
+(fixed) - Opening a new Browser Tab (perhaps this is a Unity Problem)
+(fixed) - using 'https://photoloom.com/dynadraw/index.html?code=654d0b5c-a4af-4b7e-bb5f-80e77aec7574' not logging in
+(Fixed) Post https://dynadraw.auth.us-west-2.amazoncognito.com/oauth2/token?grant_type=authorization_code&code=654d0b5c-a4af-4b7e-bb5f-80e77aec7574&client_id=6gb9lmh1ntv2l22s75snucik6n&scope=email+openid&redirect_uri=https://photoloom.com/dynadraw/index.html 
+returns 400
+
+Login from Gallery Page gets:
+https://dynadraw.auth.us-west-2.amazoncognito.com/error?error=Required+parameters+missing&client_id=6gb9lmh1ntv2l22s75snucik6n
+Because it is making this call:
+https://dynadraw.auth.us-west-2.amazoncognito.com/login?client_id=6gb9lmh1ntv2l22s75snucik6n&response_type=code&scope=email+openid&redirect_uri=
+->Redirect_Uri is null
+
+Stand alone (UWP) Mode:
+Do not call out to Web Link
+Need my own Login dialog box
  
  

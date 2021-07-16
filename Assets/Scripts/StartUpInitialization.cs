@@ -64,6 +64,9 @@ public class StartUpInitialization : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void OpenNewTab(string url);
+
+    [DllImport("__Internal")]
+    private static extern void CloseWindow(string url);
 #endif
     enum TagsICareAbout { NoHide, InverseHide, Keyboard }
 

@@ -34,7 +34,7 @@ namespace Assets.Scripts.DataObjects
             {
                 var saveDataJson = PlayerPrefs.GetString(playerPreferenceKey);
                 var stuffFromFile = JsonConvert.DeserializeObject<AwsCognitoTokensResponse>(saveDataJson);
-                if (stuffFromFile.cognito_code == null || stuffFromFile.id_token == null)
+                if (string.IsNullOrEmpty(stuffFromFile.cognito_code) || string.IsNullOrEmpty(stuffFromFile.id_token))
                 {
                     Debug.Log($"{playerPreferenceKey}, did not contain any data.");
                     throw new Exception($"Save file named {Application.persistentDataPath}/{playerPreferenceKey} had no data.");

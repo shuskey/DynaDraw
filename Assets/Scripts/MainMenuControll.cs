@@ -1,6 +1,7 @@
 using Assets.Scripts.DataObjects;
 using Newtonsoft.Json;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Web;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,7 +16,17 @@ public class MainMenuControll : MonoBehaviour
     private AwsCognitoApiScript awsCognitoApiScript;
 
     private string baseUrl = "";
-   
+
+#if UNITY_WEBGL
+    [DllImport("__Internal")]
+    private static extern void CopyToClipboard(string str);
+
+    [DllImport("__Internal")]
+    private static extern void OpenNewTab(string url);
+
+    [DllImport("__Internal")]
+    private static extern void CloseWindow();
+#endif
     public void Home()
     {
         SceneManager.LoadScene(0);
@@ -81,14 +92,22 @@ public class MainMenuControll : MonoBehaviour
             aws_tokens = awsCognitoApiScript.CognitoLogout();
             ShowLoggedIn(aws_tokens);
             if (baseUrl != "")
+            {
                 Application.OpenURL(baseUrl);
+                CloseWindow();  //so long and good bye to this window
+            }
         }
         else
         {
             Debug.Log("Login pressed by user");
             aws_tokens = awsCognitoApiScript.CognitoLogin_forWebGL(baseUrl);
+#if UNITY_WEBGL
+            CloseWindow();  //so long and good bye to this window - the New instance will start in another tab with the Cognito Code being 
+            // passed in the URL
+#endif
             ShowLoggedIn(aws_tokens);
         }
+        Debug.Log("Calling SaveIntoJson in MainMenuControll Login function");
         aws_tokens.SaveIntoJson();
 
         // What happens next, in a WebGL App, is that the Congito App Client Settings for the DynaDraw client will call back to us with a code parameter passed in
@@ -127,6 +146,7 @@ public class MainMenuControll : MonoBehaviour
             folderString = "dynadraw/";
 
         baseUrl = $"{myUri.Scheme}://{myUri.Host}{portUrlString}/{folderString}index.html";
+        Debug.Log($"MainMenuController.baseUrl={baseUrl}");
     }
 
     private void Awake()
@@ -138,16 +158,18 @@ public class MainMenuControll : MonoBehaviour
         //AwsCognitoTokensResponse aws_tokens = new AwsCognitoTokensResponse();
         //aws_tokens.GetFromJson();
         //ShowLoggedIn(aws_tokens);
+       
+        var webglUrl = Application.absoluteURL;
+
+        GetBaseUrl(webglUrl);
 
         if (SceneManager.GetActiveScene().buildIndex != 0)
             return;
 
         //Check for paramerters passed on URL for Webgl versions
-        var webglUrl = Application.absoluteURL;
         if (string.IsNullOrEmpty(webglUrl))
             return;
 
-        GetBaseUrl(webglUrl);
 
         quitButton.SetActive(false);  // no Quit button in WebGL version
 
@@ -175,35 +197,36 @@ public class MainMenuControll : MonoBehaviour
         Debug.Log("Active Scene buildIndex=" + SceneManager.GetActiveScene().buildIndex);
 
 #if UNITY_WEBGL
-        if (SceneManager.GetActiveScene().buildIndex != 0)
-            return;
-
-        //Check for paramerters passed on URL for Webgl versions
-        var webglUrl = Application.absoluteURL;
-        if (string.IsNullOrEmpty(webglUrl))
+        if (SceneManager.GetActiveScene().buildIndex == 0)
         {
-            awsCognitoApiScript.CognitoLogout();
-            return;
-        }
-            
-        var myUri = new System.Uri(webglUrl);
 
-        // If MainMenuController.Login() is called - like if the Login button is pressed, an aws congito api is called, which in return
-        // does a call back to us with the code parameter set with the authenticated users congitoCode
-        var cognitoCode = HttpUtility.ParseQueryString(myUri.Query).Get("code");
+            //Check for paramerters passed on URL for Webgl versions
+            var webglUrl = Application.absoluteURL;
+            if (string.IsNullOrEmpty(webglUrl))
+            {
+                awsCognitoApiScript.CognitoLogout();
+                return;
+            }
 
-        if (!string.IsNullOrEmpty(cognitoCode))
-        {
-            Debug.Log("URL contails cognitoCode=" + cognitoCode);
-            StartCoroutine(awsCognitoApiScript.GetCognitoTokensFromCode(cognitoCode, baseUrl));
-        }
-        else
-        {
-            Debug.Log("No cognitoCode passed in the URL");
-            awsCognitoApiScript.CognitoLogout();
-        }
+            var myUri = new System.Uri(webglUrl);
 
-        // May not need the following GetTokensFromJson because it is done in AwsCognitoApiScript Awak()
+            // If MainMenuController.Login() is called - like if the Login button is pressed, an aws congito api is called, which in return
+            // does a call back to us with the code parameter set with the authenticated users congitoCode
+            var cognitoCode = HttpUtility.ParseQueryString(myUri.Query).Get("code");
+
+            if (!string.IsNullOrEmpty(cognitoCode))
+            {
+                Debug.Log("URL contails cognitoCode=" + cognitoCode + "  baseUrl=" + baseUrl);
+                StartCoroutine(awsCognitoApiScript.GetCognitoTokensFromCode(cognitoCode, baseUrl));
+            }
+            else
+            {
+                Debug.Log("No cognitoCode passed in the URL");
+                awsCognitoApiScript.CognitoLogout();
+            }
+        }
+        // May not need the following GetTokensFromJson because it is done in AwsCognitoApiScript Awake()
+        Debug.Log("Calling GetTokensFromJson in MainMenuControll Start function");
         var aws_tokens = awsCognitoApiScript.GetTokensFromJson();
         Debug.Log("aws_tokens=" + JsonConvert.SerializeObject(aws_tokens));
         ShowLoggedIn(aws_tokens);
