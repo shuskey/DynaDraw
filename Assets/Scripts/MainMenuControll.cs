@@ -161,15 +161,14 @@ public class MainMenuControll : MonoBehaviour
        
         var webglUrl = Application.absoluteURL;
 
-        GetBaseUrl(webglUrl);
-
-        if (SceneManager.GetActiveScene().buildIndex != 0)
-            return;
-
         //Check for paramerters passed on URL for Webgl versions
         if (string.IsNullOrEmpty(webglUrl))
             return;
 
+        GetBaseUrl(webglUrl);
+
+        if (SceneManager.GetActiveScene().buildIndex != 0)
+            return;
 
         quitButton.SetActive(false);  // no Quit button in WebGL version
 

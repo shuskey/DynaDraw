@@ -87,19 +87,15 @@ public class AwsCognitoApiScript : MonoBehaviour
         //    CognitoAWSCredentials credentials = new CognitoAWSCredentials(
         //        AwsSecrets.AwsIdentityPoolId, RegionEndpoint.USWest2);
         //var identityId = credentials.GetIdentityId();
-        var CLIENTAPP_ID = "4tta86ma8oudh0o30ns4hteha7";
-        var POOL_ID = "us-west-2_2KFggV1Xy";
 
-        var username = "scott+1@photoloom.com";
-        var password = "Password1!";
 
         AmazonCognitoIdentityProviderClient provider = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials(), RegionEndpoint.USWest2);
-        CognitoUserPool userPool = new CognitoUserPool(POOL_ID, CLIENTAPP_ID, provider);
+        CognitoUserPool userPool = new CognitoUserPool(AwsSecrets.POOL_ID, AwsSecrets.CLIENTAPP_ID, provider);
 
-        CognitoUser user = new CognitoUser(username, CLIENTAPP_ID, userPool, provider);
+        CognitoUser user = new CognitoUser(AwsSecrets.TEST_USERNAME, AwsSecrets.CLIENTAPP_ID, userPool, provider);
         InitiateSrpAuthRequest authRequest = new InitiateSrpAuthRequest()
         {
-            Password = password
+            Password = AwsSecrets.TEST_PASSWORD
         };
 
         AuthFlowResponse authResponse = await user.StartWithSrpAuthAsync(authRequest).ConfigureAwait(false);

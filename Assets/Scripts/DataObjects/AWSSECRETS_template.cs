@@ -7,7 +7,7 @@ namespace Assets.Scripts.DataObjects
     // To use rename the file and class to
     // AWSSECRETS.cs & AWSSECRETS
     // Put your secrets in below
-    public class AWSSECRETS_template           
+    public class AWSSECRETS_template
     {
         // Client App secretes Template
         public string ClientId
@@ -28,6 +28,26 @@ namespace Assets.Scripts.DataObjects
         public string AwsCognitoLoginURL
         {
             get { return "https://YourDomin.auth.YourRegion.amazoncognito.com/login?client_id={0}&response_type=code&scope=email+openid&redirect_uri={1}"; }
+            set { }
+        }
+        public string CLIENTAPP_ID
+        {
+            get { return "yourclientappidhere"; }
+            set { }
+        }
+        public string POOL_ID
+        {
+            get { return "yourpoolidhere"; }
+            set { }
+        }
+        public string TEST_USERNAME
+        {
+            get { return "yourtestusernamehere"; }
+            set { }
+        }
+        public string TEST_PASSWORD
+        {
+            get { return "yourtestpasswordhere"; }
             set { }
         }
     }
