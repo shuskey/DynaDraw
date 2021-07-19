@@ -57,30 +57,6 @@ public class MainMenuControll : MonoBehaviour
         Application.Quit();
     }
 
-#if UNITY_STANDALONE
-    public async void Login()
-    {
-        AwsCognitoTokensResponse aws_tokens;
-
-        if (loginLogoutButton.GetComponentInChildren<Text>().text == "Logout")
-        {
-            aws_tokens = awsCognitoApiScript.CognitoLogout();
-            ShowLoggedIn(aws_tokens);
-            if (baseUrl != "")
-                Application.OpenURL(baseUrl);
-        }
-        else
-        {
-            aws_tokens = await awsCognitoApiScript.CognitoLoginAsync_forStandAlone(baseUrl);
-            ShowLoggedIn(aws_tokens);
-        }        
-        aws_tokens.SaveIntoJson();
-        
-        // What happens next, in a WebGL App, is that the Congito App Client Settings for the DynaDraw client will call back to us with a code parameter passed in
-        // We sould catch with in the below Awake function 
-    }
-#endif
-
 #if UNITY_WEBGL
     public void Login()
     {
@@ -101,15 +77,37 @@ public class MainMenuControll : MonoBehaviour
         {
             Debug.Log("Login pressed by user");
             aws_tokens = awsCognitoApiScript.CognitoLogin_forWebGL(baseUrl);
-#if UNITY_WEBGL
             CloseWindow();  //so long and good bye to this window - the New instance will start in another tab with the Cognito Code being 
             // passed in the URL
-#endif
             ShowLoggedIn(aws_tokens);
         }
         Debug.Log("Calling SaveIntoJson in MainMenuControll Login function");
         aws_tokens.SaveIntoJson();
 
+        // What happens next, in a WebGL App, is that the Congito App Client Settings for the DynaDraw client will call back to us with a code parameter passed in
+        // We sould catch with in the below Awake function 
+    }
+
+#else
+
+    public async void Login()
+    {
+        AwsCognitoTokensResponse aws_tokens;
+
+        if (loginLogoutButton.GetComponentInChildren<Text>().text == "Logout")
+        {
+            aws_tokens = awsCognitoApiScript.CognitoLogout();
+            ShowLoggedIn(aws_tokens);
+            if (baseUrl != "")
+                Application.OpenURL(baseUrl);
+        }
+        else
+        {
+            aws_tokens = await awsCognitoApiScript.CognitoLoginAsync_forStandAlone(baseUrl);
+            ShowLoggedIn(aws_tokens);
+        }        
+        aws_tokens.SaveIntoJson();
+        
         // What happens next, in a WebGL App, is that the Congito App Client Settings for the DynaDraw client will call back to us with a code parameter passed in
         // We sould catch with in the below Awake function 
     }
@@ -224,12 +222,11 @@ public class MainMenuControll : MonoBehaviour
                 awsCognitoApiScript.CognitoLogout();
             }
         }
+#endif
         // May not need the following GetTokensFromJson because it is done in AwsCognitoApiScript Awake()
         Debug.Log("Calling GetTokensFromJson in MainMenuControll Start function");
         var aws_tokens = awsCognitoApiScript.GetTokensFromJson();
         Debug.Log("aws_tokens=" + JsonConvert.SerializeObject(aws_tokens));
         ShowLoggedIn(aws_tokens);
-#endif
-
     }
 }
